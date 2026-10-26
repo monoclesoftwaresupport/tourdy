@@ -1,0 +1,80 @@
+{
+  "blue": {
+    "name": "파랑",
+    "outer": "#3B86FC",
+    "inner": "#93BCFD",
+    "background": "#0E1526"
+  },
+  "orange": {
+    "name": "주황",
+    "outer": "#F4682A",
+    "inner": "#F9AC8A",
+    "background": "#0E1526"
+  },
+  "red": {
+    "name": "빨강",
+    "outer": "#F2393B",
+    "inner": "#F89293",
+    "background": "#0E1526"
+  },
+  "yellow": {
+    "name": "노랑",
+    "outer": "#F3B800",
+    "inner": "#F8D873",
+    "background": "#0E1526"
+  },
+  "lime": {
+    "name": "라임",
+    "outer": "#8CC825",
+    "inner": "#C0E187",
+    "background": "#0E1526"
+  },
+  "green": {
+    "name": "초록",
+    "outer": "#0FB85C",
+    "inner": "#7BD8A5",
+    "background": "#0E1526"
+  },
+  "teal": {
+    "name": "청록",
+    "outer": "#19B4A6",
+    "inner": "#80D6CE",
+    "background": "#0E1526"
+  },
+  "sky": {
+    "name": "하늘",
+    "outer": "#17A7F0",
+    "inner": "#7FCFF7",
+    "background": "#0E1526"
+  },
+  "navy": {
+    "name": "남색",
+    "outer": "#4C45EC",
+    "inner": "#9D99F5",
+    "background": "#0E1526"
+  },
+  "purple": {
+    "name": "보라",
+    "outer": "#8E5DFF",
+    "inner": "#C1A6FF",
+    "background": "#0E1526"
+  },
+  "magenta": {
+    "name": "마젠타",
+    "outer": "#E726BA",
+    "inner": "#F288D9",
+    "background": "#0E1526"
+  },
+  "pink": {
+    "name": "분홍",
+    "outer": "#FE7FBD",
+    "inner": "#FEB9DB",
+    "background": "#0E1526"
+  },
+  "brown": {
+    "name": "갈색",
+    "outer": "#B8732F",
+    "inner": "#D8B28D",
+    "background": "#0E1526"
+  }
+}
