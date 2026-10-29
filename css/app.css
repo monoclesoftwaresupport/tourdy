@@ -1817,3 +1817,5 @@ select.sp-native{display:none!important}
 .sp-empty{padding:0 18px 6px}
 .sp-new{margin:4px 18px 18px;padding:12px;border-radius:12px;background:var(--hover);color:var(--accent);font-weight:700;font-size:14px}
 .invite-login{margin-top:14px} /* 친구 초대: 안내 문장과 버튼 사이 여백 */
+/* 마일리지 설정 > 보너스 마일리지: 카드 안 줄 간격과 위아래 여백 */
+#mileBody .bn-rules{margin-top:8px}#mileBody .bn-rules>div{gap:6px;padding:14px 14px 18px}#mileBody .bn-rules+.note{margin-top:12px;line-height:1.6}
