@@ -1831,3 +1831,95 @@ select.sp-native{display:none!important}
 .forgot-acts{display:flex;flex-direction:column;gap:8px}
 
 .forgot-dialog[open]{min-height:0}
+/* ===== 우주: 줌아웃 지도 (js/space-plus.js) ===== */
+.spm{display:flex;flex-direction:column;gap:8px}
+.spm-box{position:relative;width:100%;max-width:520px;margin:0 auto;aspect-ratio:1;border-radius:20px;overflow:hidden;border:1px solid rgba(255,255,255,.08);
+  background:radial-gradient(circle at 50% 50%,rgba(255,207,58,.16),transparent 22%),radial-gradient(1px 1px at 12% 18%,#fff8,transparent),radial-gradient(1px 1px at 72% 12%,#fff6,transparent),radial-gradient(1px 1px at 86% 64%,#fff7,transparent),radial-gradient(1px 1px at 30% 82%,#fff5,transparent),radial-gradient(1.5px 1.5px at 58% 40%,#fff6,transparent),#070a1c}
+.spm[data-spz="1"] .spm-box{background-color:#060b20;background-image:radial-gradient(circle at 50% 50%,rgba(158,194,255,.14),transparent 30%),radial-gradient(1px 1px at 12% 18%,#fff9,transparent),radial-gradient(1px 1px at 72% 12%,#fff8,transparent),radial-gradient(1px 1px at 86% 64%,#fff8,transparent),radial-gradient(1px 1px at 30% 82%,#fff6,transparent),radial-gradient(1px 1px at 44% 28%,#fff7,transparent),radial-gradient(1px 1px at 64% 88%,#fff6,transparent)}
+.spm[data-spz="2"] .spm-box{background-color:#0c0718;background-image:radial-gradient(ellipse at 30% 35%,rgba(255,111,160,.18),transparent 40%),radial-gradient(ellipse at 70% 70%,rgba(127,217,196,.14),transparent 45%),radial-gradient(1px 1px at 12% 18%,#fff8,transparent),radial-gradient(1px 1px at 86% 64%,#fff7,transparent)}
+.spm[data-spz="3"] .spm-box{background-color:#06040f;background-image:radial-gradient(ellipse at 50% 50%,rgba(199,155,255,.22),transparent 26%),radial-gradient(ellipse 60% 18% at 50% 50%,rgba(199,155,255,.12),transparent 70%),radial-gradient(1px 1px at 20% 70%,#fff6,transparent),radial-gradient(1px 1px at 80% 30%,#fff6,transparent)}
+.spm-in{position:absolute;inset:0;transform-origin:50% 50%}
+.spm-in svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.spm-orbit{fill:none;stroke:rgba(255,255,255,.13);stroke-width:.22}
+.spm-belt{fill:none;stroke:rgba(159,179,217,.3);stroke-width:1.4;stroke-dasharray:.3 .9}
+.spm-ring{fill:none;stroke:rgba(255,255,255,.14);stroke-width:.22;stroke-dasharray:1 1}
+.spm-rl{font-size:2.6px;fill:#8f99c9;text-anchor:middle;font-family:"IBM Plex Mono",monospace}
+.spm-path{stroke:rgba(255,255,255,.4);stroke-width:.35;stroke-dasharray:1 1}
+.spm-done{stroke:#b8a6ff;stroke-width:.7;stroke-linecap:round}
+.spm-n{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:0;padding:4px;margin:0;color:#e8ecff;font:inherit;opacity:.5;z-index:1;-webkit-tap-highlight-color:transparent}
+button.spm-n{cursor:pointer}button.spm-n:hover{opacity:1}
+.spm-n.done,.spm-n.nx,.spm-n.to,.spm-n.at,.spm-n.earth{opacity:1}
+.spm-n.done .planet{outline:1.5px solid rgba(184,166,255,.75);outline-offset:2px}
+.spm-n.to{z-index:3}.spm-n.to .planet{animation:spmPulse 1.6s ease-in-out infinite}
+@keyframes spmPulse{50%{filter:drop-shadow(0 0 6px #ffc83d) drop-shadow(0 0 2px #ffc83d)}}
+.spm-n:focus-visible{outline:2px solid #b8a6ff;outline-offset:1px;border-radius:10px}
+.spm-l{font-size:10px;font-weight:700;line-height:1.2;white-space:nowrap;text-shadow:0 1px 3px #000,0 0 2px #000;pointer-events:none}
+.spm-n.moon .spm-l{font-size:9px}
+.spm-tag{font-size:9px;font-weight:800;color:#0b1020;background:#ffc83d;border-radius:6px;padding:1px 5px;white-space:nowrap}
+.spm-c{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:3px;pointer-events:none}
+.spm-c i{width:8px;height:8px;border-radius:50%;background:#ffcf3a;box-shadow:0 0 10px 3px rgba(255,207,58,.55)}
+.spm-c small{font-size:9px;font-weight:700;color:#cfd6ff;text-shadow:0 1px 2px #000}
+.spm-here{position:absolute;width:30px;height:30px;transform:translate(-50%,-50%);border:2px solid #ffc83d;border-radius:50%;pointer-events:none;z-index:2;animation:spmHere 2s ease-out infinite}
+@keyframes spmHere{0%{opacity:1;width:20px;height:20px}100%{opacity:0;width:44px;height:44px}}
+.spm-rk{position:absolute;transform:translate(-50%,-50%) rotate(var(--a));color:#fff;display:grid;z-index:2;pointer-events:none;filter:drop-shadow(0 0 4px #b8a6ff)}
+.spm-rk svg{width:18px;height:18px}
+.spm-cap{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:11px;color:#8f99c9;width:100%;max-width:520px;margin:0 auto}.spm-cap span{font-weight:800;color:#cfd6ff;font-size:12px}
+.spm.zoom-out .spm-in{animation:spmOut 1.1s cubic-bezier(.2,.8,.2,1)}
+.spm.zoom-in .spm-in{animation:spmIn .8s cubic-bezier(.2,.8,.2,1)}
+@keyframes spmOut{from{transform:scale(3.2);opacity:.15}}
+@keyframes spmIn{from{transform:scale(.35);opacity:.2}}
+/* ===== 우주: 미션 브리핑 · 발사 ===== */
+.sp-brief{z-index:95}
+.sp-bbox{width:100%;max-width:420px;margin:auto;background:#0f1230;color:#e8ecff;border:1px solid rgba(255,255,255,.1);border-radius:22px;padding:20px;display:flex;flex-direction:column;gap:14px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.spb-k,.spl-k{font-family:"IBM Plex Mono",monospace;font-size:12px;font-weight:600;letter-spacing:.12em;color:#b8a6ff}
+.spb-route{display:flex;align-items:center;gap:12px}
+.spb-line{flex:1;position:relative;height:2px;background-image:linear-gradient(90deg,rgba(255,255,255,.35) 50%,transparent 50%);background-size:8px 2px}
+.spb-line svg{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:22px;height:22px;color:#fff}
+.spb-names{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-top:-6px}.spb-names span{font-size:13px;color:#aab3e0;font-weight:700}.spb-names b{font-size:22px;font-weight:800;letter-spacing:-.02em;text-align:right}
+.spb-desc{margin:0;font-size:14px;color:#aab3e0}
+.spb-dl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:0}
+.spb-dl div{background:rgba(255,255,255,.06);border-radius:12px;padding:10px 12px;min-width:0}
+.spb-dl dt{font-size:11px;color:#8f99c9;font-weight:700}.spb-dl dd{margin:2px 0 0;font-size:14px;font-weight:800;font-variant-numeric:tabular-nums}.spb-dl dd.ok{color:#7ee2a8}
+.spb-warn{margin:0;font-size:12px;color:#ffc83d}
+.spb-a{display:flex;flex-direction:column;gap:8px}
+.spl{display:flex;flex-direction:column;align-items:center;gap:12px}
+.spl-n{font-size:64px;font-weight:900;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.spl-n.pop{animation:splPop .45s cubic-bezier(.3,1.6,.5,1)}
+@keyframes splPop{from{transform:scale(1.6);opacity:.2}}
+.spl-pad{position:relative;width:100%;height:170px;border-radius:16px;overflow:hidden;background:linear-gradient(#070a1c,#1d2250 80%,#2a2f5e)}
+.spl-pad::after{content:"";position:absolute;left:0;right:0;bottom:0;height:14px;background:#3a3f6e}
+.spl-rk{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);color:#fff;display:grid;z-index:1}
+.spl-rk svg{width:46px;height:46px;transform:rotate(-90deg)}
+.spl-fire{position:absolute;left:50%;top:92%;width:12px;height:0;transform:translateX(-50%);border-radius:0 0 50% 50%;background:linear-gradient(#fff3b0,#ffb13d 40%,#ff5a3c 75%,transparent)}
+.spl-smoke{position:absolute;left:50%;bottom:6px;width:160px;height:40px;transform:translateX(-50%) scale(.4);border-radius:50%;background:radial-gradient(ellipse,rgba(220,225,255,.55),transparent 70%);opacity:0;transition:opacity .4s,transform 1.2s ease-out}
+.spl.lift .spl-fire{height:40px;animation:splFlick .08s infinite alternate}
+.spl.lift .spl-rk{animation:splUp 1.6s cubic-bezier(.55,0,.8,.3) .25s forwards}
+.spl.lift .spl-smoke{opacity:1;transform:translateX(-50%) scale(1.8)}
+.spl.lift .spl-pad{animation:splShake .1s linear 10}
+@keyframes splFlick{to{height:52px;opacity:.85}}
+@keyframes splUp{to{transform:translate(-50%,-240px)}}
+@keyframes splShake{25%{transform:translate(1.5px,-1px)}75%{transform:translate(-1.5px,1px)}}
+/* ===== 우주: 도착 연출 ===== */
+.spa{position:relative;width:100%;max-width:420px;height:300px;margin:0 auto;border-radius:22px;overflow:hidden;background:radial-gradient(circle at 50% 45%,#1d2250,#05060f 70%)}
+.spa-sky{position:absolute;inset:0;background:radial-gradient(1px 1px at 12% 18%,#fff9,transparent),radial-gradient(1px 1px at 72% 12%,#fff8,transparent),radial-gradient(1px 1px at 86% 64%,#fff8,transparent),radial-gradient(1px 1px at 30% 82%,#fff6,transparent),radial-gradient(1.5px 1.5px at 44% 28%,#fff8,transparent),radial-gradient(1px 1px at 64% 88%,#fff6,transparent),radial-gradient(1px 1px at 92% 22%,#fff7,transparent)}
+.spa-pl{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) scale(.25);animation:spaGrow 1.3s ease-out forwards}
+@keyframes spaGrow{to{transform:translate(-50%,-50%) scale(1)}}
+.spa.land .spa-pl{animation:spaLand 1s ease-in forwards}
+@keyframes spaLand{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,8%) scale(2.6);filter:brightness(.7)}}
+.spa-rk{position:absolute;left:8%;top:22%;color:#fff;display:grid;filter:drop-shadow(0 0 6px #b8a6ff);animation:spaFly 1.3s ease-out forwards}
+.spa-rk svg{width:28px;height:28px}
+@keyframes spaFly{from{transform:translate(-50px,-30px)}to{transform:translate(120px,70px) rotate(25deg)}}
+.spa.land .spa-rk{opacity:0;transition:opacity .4s}
+.spa-st{position:absolute;left:0;right:0;bottom:16px;text-align:center;font-family:"IBM Plex Mono",monospace;font-size:13px;font-weight:600;letter-spacing:.24em;color:#cfd6ff;transition:opacity .3s}
+.spa.stamp .spa-st{opacity:0}
+.spa-patch{position:absolute;left:50%;top:50%;width:140px;transform:translate(-50%,-50%) scale(2.4);opacity:0;background:#0f1230;color:#e8ecff;box-shadow:0 10px 30px rgba(0,0,0,.5)}
+.spa.stamp .spa-patch{animation:spaStamp .45s cubic-bezier(.3,1.6,.5,1) forwards}
+@keyframes spaStamp{to{opacity:1;transform:translate(-50%,-50%) scale(1) rotate(-8deg)}}
+.arr-msg .spa-fact{font-size:13px;color:rgba(255,255,255,.7);max-width:34ch}
+@media (prefers-reduced-motion:reduce){
+  .spm-n.to .planet,.spm-here,.spl-n.pop,.spl.lift .spl-pad,.spl.lift .spl-fire{animation:none}
+  .spl.lift .spl-rk{animation:none;opacity:0;transition:opacity .2s}
+  .spa-pl,.spa.land .spa-pl,.spa-rk{animation:none}.spa-pl{transform:translate(-50%,-50%) scale(1)}.spa-rk{display:none}
+  .spa.stamp .spa-patch{animation:none;opacity:1;transform:translate(-50%,-50%) rotate(-8deg)}
+}
+.spm-c{flex-direction:column-reverse}

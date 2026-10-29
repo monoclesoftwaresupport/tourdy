@@ -50,7 +50,7 @@ function checkSpace(){
   if(globalThis.TourdyNative&&!globalThis.TourdyNative.transactionComputing)return durableArrival(checkSpace,()=>{const T=tr(),P=sp(T);return !!(T.on&&P.to&&SPX[P.to]&&totalMiles()-T.used>=SPX[P.to][4])});
   const T=tr(),P=sp(T);if(!T.on||!P.to||!SPX[P.to])return false;const s=SPX[P.to];
   if(totalMiles()-T.used<s[4])return false;
-  T.used+=s[4];if(!spDone(P,s[0]))P.done.push({c:s[0],d:dk(today0())});P.at=s[0];P.to=null;(T.spNews=T.spNews||[]).push(s[0]);save();return true;
+  const from=P.at;T.used+=s[4];if(!spDone(P,s[0]))P.done.push({c:s[0],d:dk(today0())});P.at=s[0];P.to=null;arrQ({w:'space',f:from,t:s[0],n:P.done.length});save();return true; // 도착 연출은 js/space-plus.js
 }
 function planet(s,size=56){return `<span class="planet ${s[7]||''}" data-id="${s[0]}" style="--p:${s[5]};--s:${size}px"></span>`}
 function renderSpace(){
@@ -71,6 +71,7 @@ function renderSpace(){
   else{
     h+=`<div class="sp-zones">${ZONES.map((z,i)=>{const op=zoneOpen(P,i),n=SPACE.filter(s=>s[3]===i),d=n.filter(s=>spDone(P,s[0])).length;
       return `<button data-zone="${i}" aria-pressed="${i===spZone}" ${op?'':'disabled'}>${op?'':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>'}<b>${z}</b><small>${d}/${n.length}</small></button>`}).join('')}</div>`;
+    h+=spMapHTML(T,P,avail);
     const rows=SPACE.filter(s=>s[3]===spZone&&!spDone(P,s[0])).sort((a,b)=>a[4]-b[4]);
     h+=`<ul class="sp-list">${rows.map(s=>{const go=P.to===s[0],ok=avail>=s[4];
       return `<li><button class="sp-row${go?' cur':''}" data-sp="${s[0]}">${planet(s,30)}<span class="sn"><b>${s[1]}</b><small>${s[6]}</small></span><span class="sc"><b>${s[4]}</b><small>${go?'비행 중':ok?'바로 도착 가능':studyFor(s[4]-avail)}</small></span></button></li>`}).join('')||'<li class="sp-empty">이 구역은 모두 탐사했어요</li>'}</ul>
@@ -80,7 +81,7 @@ function renderSpace(){
   h+=`<div class="sp-sec">미션 패치 · ${P.done.length}개</div>`+(P.done.length?`<div class="patches">${P.done.slice().reverse().map((x,i)=>{const s=spObj(x.c);
     return `<div class="patch" style="--p:${s[5]}">${planet(s,40)}<span class="pm">MISSION ${pad(P.done.length-i)}</span><b>${s[1]}</b><span class="pd">${dd(x.d)}</span></div>`}).join('')}</div>`
     :'<p class="sp-empty">첫 탐사를 마치면 패치가 생겨요.</p>');
-  $('tvSpace').innerHTML=h;
+  $('tvSpace').innerHTML=h;spMapAfter();
 }
 $('tvSpace').addEventListener('click',e=>{const T=tr(),P=sp(T);
   const a=e.target.closest('[data-add]');if(a&&TRAVEL_TEST){T.used-=+a.dataset.add;save();if(checkSpace())ding();renderSpace();return}
@@ -88,7 +89,7 @@ $('tvSpace').addEventListener('click',e=>{const T=tr(),P=sp(T);
   if(e.target.closest('#spRelock')&&TRAVEL_TEST){T.spTest=false;save();renderTravel();return}
   if(e.target.closest('#spReset')&&TRAVEL_TEST){T.sp2={at:'earth',to:null,done:[]};delete T.sp;spZone=null;save();renderSpace();return}
   const z=e.target.closest('[data-zone]');if(z&&!z.disabled){spZone=+z.dataset.zone;renderSpace();return}
-  const r=e.target.closest('[data-sp]');if(r){P.to=r.dataset.sp;T.to=null;kr(T).to=null;spArm=false;save();if(checkSpace())ding();renderSpace();window.scrollTo({top:0,behavior:'smooth'});return}
+  const r=e.target.closest('[data-sp]');if(r){spBriefOpen(r.dataset.sp);return} // 미션 브리핑 → 발사 카운트다운 (js/space-plus.js)
   if(e.target.closest('#spCancel')){if(spArm){P.to=null;spArm=false;save()}else spArm=true;renderSpace()}
 });
 function renderWorld(){
