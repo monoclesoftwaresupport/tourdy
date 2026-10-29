@@ -1032,7 +1032,7 @@ details.rec summary,.donehead{font-size:16px;font-weight:700}
 .mapsvg{touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}.mapsvg.grab{cursor:grabbing}
 .kmap{aspect-ratio:4/3;max-height:none}.wmap{aspect-ratio:1000/464}
 .mapsvg .route-on{stroke:var(--mc,#1d6fd8)}.mapsvg g[style] .mv-bg{stroke:var(--mc)}.mapsvg g[style] g>svg{color:var(--mc)}
-.mile-reset{align-self:flex-start}
+
 /* 도착 연출 */
 .arr{position:fixed;inset:0;z-index:90;background:rgba(10,14,22,.62);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;
   padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));animation:arrFade .2s ease-out}

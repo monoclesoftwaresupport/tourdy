@@ -17,7 +17,7 @@ const SET_ITEMS=[
   ['daystart','하루의 시작',()=>DS?`${ampm(new Date(2000,0,1,DS).getTime())}`:'자정'],
   ['week','한 주의 시작',()=>DOW[wkStart()]+'요일'],
   ['dday','D-day',()=>S.dday?`${S.dday.name||'D-day'} · ${S.dday.date.slice(5).replace('-','/')}`:'없음'],
-  ['backup','백업',()=>''],
+  ['reset','기록 초기화',()=>''],
   ['ex','예시 데이터',()=>'지우기'],
 ];
 const CHEV_R='<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m6 3 5 5-5 5"/></svg>';
@@ -26,12 +26,11 @@ function renderSet(){
   // PIP는 PC·맥에서만. 아이폰·아이패드·안드로이드(앱·브라우저 모두)에서는 숨긴다.
   // 아이패드 사파리는 맥처럼 보고하므로 터치 지점 수로 구분한다
   const pipAllowed=()=>!window.TourdyNative&&!/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)&&!(/Mac/.test(navigator.platform)&&navigator.maxTouchPoints>1);
-  const IT=Object.fromEntries(SET_ITEMS.map(x=>[x[0],x])),GR=[['타이머 설정',['goal','notify','extra','theme','pip','daystart','week','dday']],['여행 설정',['travel','sound','mile']],['계정',['account','invite']],['기타',['backup','ex']]];
+  const IT=Object.fromEntries(SET_ITEMS.map(x=>[x[0],x])),GR=[['타이머 설정',['goal','notify','extra','theme','pip','daystart','week','dday']],['여행 설정',['travel','sound','mile']],['계정',['account','invite']],['기타',['reset','ex']]];
   $('setItems').innerHTML=GR.map(([g,ks])=>{const rows=ks.filter(k=>IT[k]&&(k!=='ex'||ex)&&(k!=='pip'||pipAllowed())).map(k=>{const [,t,v]=IT[k];return `<li><button data-go="${k}"><span class="sl-t">${t}</span><span class="sl-v">${esc(v())}</span>${CHEV_R}</button></li>`}).join('');
     return rows?`<li class="sl-g">${g}</li>${rows}`:''}).join('');
   $('setList').hidden=!!setPage;$('setBack').hidden=!setPage;
   document.querySelectorAll('#vSet [data-page]').forEach(el=>el.hidden=el.dataset.page!==setPage);
-  if(setPage==='backup'&&window.TourdyNative)$('bkNote').textContent='기록은 이 기기의 앱 안에 저장돼요. 앱을 지우면 기록도 함께 사라지니, 앱을 지우거나 기기를 바꾸기 전에 꼭 백업해 두세요.';
   if(setPage==='account'&&window.TourdyAccount)TourdyAccount.render();
   if(setPage==='goal')renderGoal();
   if(setPage==='theme')renderTheme();
@@ -64,8 +63,6 @@ document.querySelectorAll('[data-sw]').forEach(b=>b.addEventListener('click',asy
   if(g==='notify')S.notify=Object.assign(NF(),{[k]:v});else S.extra=Object.assign(EX(),{[k]:v});save();renderSet();renderExtras();renderTasks()}));
 $('testSound').onclick=()=>{audio();tone(SND.end);toast('알림음이 이렇게 울려요')};
 $('tvStyle').addEventListener('click',e=>{const b=e.target.closest('[data-sty]');if(!b)return;tr().style=b.dataset.sty;save();renderSet()});
-let mileArm=false;$('tvMileReset').onclick=()=>{const b=$('tvMileReset');if(!mileArm){mileArm=true;b.classList.add('del','arm');b.textContent='정말 0으로 만들까요? (되돌릴 수 없어요)';return}
-  const T=tr();T.used=totalMiles();save();mileArm=false;b.classList.remove('del','arm');b.textContent='보유 마일리지를 0으로 만들었어요';};
 document.querySelectorAll('[data-snd]').forEach(b=>b.addEventListener('click',()=>{const k=b.dataset.snd;S.snd=Object.assign(TSND(),{[k]:!TSND()[k]});save();renderSet()}));
 document.querySelectorAll('[data-sndt]').forEach(b=>b.addEventListener('click',()=>{audio();const k=b.dataset.sndt;if(k==='rip'){const v=TSND().rip;S.snd=Object.assign(TSND(),{rip:true});ripSound();S.snd.rip=v}else{const v=TSND().arrive;S.snd=Object.assign(TSND(),{arrive:true});arrSound(k);S.snd.arrive=v}}));
 document.querySelectorAll('[data-topt]').forEach(b=>b.addEventListener('click',()=>{const o=TOPT(),k=b.dataset.topt;o[k]=!o[k];save();applyNeon();renderSet()}));
@@ -156,19 +153,9 @@ $('repForm').addEventListener('submit',e=>{e.preventDefault();const t=$('repText
   S.repeats.push({id:uid(),text:t,sid:$('repSub').value||null,days:repDays.slice(),startN:parseInt($('repN').value)||0,startDate:dk(today0())});
   $('repText').value='';save();renderReps();renderTasks();toast('반복 할 일을 만들었어요')});
 
-$('bkCopy').onclick=()=>{const txt=JSON.stringify(S);
-  navigator.clipboard.writeText(txt).then(()=>{$('bkMsg').textContent='클립보드에 복사했어요. 메모 앱 등에 붙여 넣어 보관하세요.'})
-  .catch(()=>{$('bkText').value=txt;$('bkText').select();$('bkMsg').textContent='아래 칸의 내용을 직접 복사해 주세요.'})};
-let bkArm=false,wipeArm=false;
+let wipeArm=false;
 $('wipeAll').onclick=async()=>{if(!wipeArm){wipeArm=true;$('wipeAll').textContent='정말 모두 지우기';$('wipeAll').classList.add('arm');return}
   const next=seed();TourdyRewards.initialize(next);if(!await writeCandidate(next,{replace:true}))return;S=next;wipeArm=false;$('wipeAll').textContent='모든 기록 지우기';$('wipeAll').classList.remove('arm');setPage=null;setTab('home');renderAll();renderExtras();toast('모든 기록을 지웠어요')};
-$('bkRestore').onclick=async()=>{
-  const err=m=>{$('bkErr').textContent=m;$('bkErr').hidden=false};$('bkErr').hidden=true;
-  let d;try{d=JSON.parse($('bkText').value)}catch(e){return err('백업 내용을 읽지 못했어요. 복사한 내용을 그대로 붙여 넣어 주세요.')}
-  try{TourdyStorage.validate(d);d=norm(d)}catch(e){return err('투어디 기록 형식이 아니거나 일부 기록이 손상됐어요. 기존 기록은 바꾸지 않았어요.')}
-  if(!bkArm){bkArm=true;$('bkRestore').textContent='지금 기록을 덮어쓰고 복원';$('bkRestore').classList.add('del','arm');return}
-  TourdyRewards.initialize(d);if(!await writeCandidate(d,{replace:true}))return err('복원 내용을 저장하지 못했어요. 기존 기록은 유지됩니다.');S=d;bkArm=false;$('bkRestore').textContent='복원하기';$('bkRestore').classList.remove('del','arm');$('bkText').value='';$('bkMsg').textContent='복원했어요.';renderAll();renderExtras();renderFirstTripNotice();
-};
 function hasEx(){return S.sessions.some(x=>x.ex)||S.repeats.some(x=>x.ex)||Object.values(S.tasks).some(l=>l.some(t=>t.ex))}
 document.addEventListener('click',e=>{if(!e.target.closest('[data-clear-ex]'))return;if(setPage==='ex')setPage=null;
   S.sessions=S.sessions.filter(x=>!x.ex);S.repeats=S.repeats.filter(x=>!x.ex);
