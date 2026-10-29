@@ -1,5 +1,7 @@
 /* 웹앱: 오프라인 저장, 저장 공간 유지 요청, 설치 안내 */
-if('serviceWorker' in navigator)window.addEventListener('load',()=>{
+// 다른 페이지 안에 끼워져 열린 경우(Claude 아티팩트 미리보기 등)는 서비스 워커가 막혀 있어서 등록하지 않는다
+const embedded=(()=>{try{return window.self!==window.top}catch(e){return true}})();
+if('serviceWorker' in navigator&&!embedded)window.addEventListener('load',()=>{
   let reloading=false;
   navigator.serviceWorker.addEventListener('controllerchange',()=>{if(reloading)location.reload()});
   navigator.serviceWorker.register('sw.js').then(reg=>{
