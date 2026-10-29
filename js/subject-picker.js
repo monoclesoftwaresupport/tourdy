@@ -31,7 +31,7 @@
     dlg.innerHTML=`<div class="sp-h"><b id="spTitle">과목 선택</b><button type="button" class="sp-x" data-sp="close" aria-label="닫기">${XI}</button></div>
       <ul class="sp-list">${h}</ul>
       ${hasSubs?'':'<p class="note sp-empty">아직 만든 과목이 없어요.</p>'}
-      <button type="button" class="sp-new" data-sp="preset">+ 프리셋 목록에서 과목 만들기·꾸미기</button>`;
+      <button type="button" class="sp-new" data-sp="preset">+ 프리셋 목록에서 과목 만들기</button>`;
     dlg.showModal();
     const f=dlg.querySelector('.sp-op.on')||dlg.querySelector('.sp-op:not([disabled])');if(f)f.focus();
   }
