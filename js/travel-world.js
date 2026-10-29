@@ -74,7 +74,7 @@ function bonusList(pd){pd=pd||perDay(true);const out=[],days=Object.keys(pd).fil
   return out}
 function curStreak(){const pd=perDay(true);let d=today0(),n=0;if(!(pd[dk(d)]&&pd[dk(d)].study>=6e4))d=addD(d,-1);while(pd[dk(d)]&&pd[dk(d)].study>=6e4){n++;d=addD(d,-1)}return n}
 const studyFor=miles=>fmtH(Math.max(0,miles)*MILE_MS);
-function checkArrival(){return checkEarth()||checkSpace()||checkKorea()}
+function checkArrival(){let any=false,g=0;while(g++<12&&(checkEarth()||checkSpace()||checkKorea()))any=true;return any} // 경유·특별 루트처럼 이어지는 구간은 마일리지가 되는 만큼 한 번에 도착
 function checkEarth(){
   if(globalThis.TourdyNative&&!globalThis.TourdyNative.transactionComputing)return durableArrival(checkEarth,()=>{const T=tr();return !!(T.on&&T.to&&!T.hold&&totalMiles()-T.used>=wTC(T))});
   const T=tr();if(!T.on||!T.to||T.hold)return false;const cost=wTC(T);

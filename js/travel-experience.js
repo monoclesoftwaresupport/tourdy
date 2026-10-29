@@ -95,7 +95,8 @@ function renderRoutes(w){const el=$(w==='kr'?'krRoutes':'tvRoutes');if(!el)retur
 document.addEventListener('keydown',e=>{const card=e.target.closest('[data-rtgo]');if(card&&(e.key==='Enter'||e.key===' ')){e.preventDefault();card.click()}});
 document.addEventListener('click',e=>{const g=e.target.closest('[data-rtgo]');if(g)startRoute(g.dataset.rtgo)});
 /* ---------- 경유 (선택) ---------- */
-function pickViaKr(a,b){const d=krKm(a,b);if(d<150)return null;let best=null,bs=-1;
+function pickViaKr(a,b){const L=krRoute(a,b);if(L.length>1&&L[0].t!==a&&L[0].t!==b)return L[0].t; // 환승이 있으면 표에 적힌 첫 환승 도시에 들름
+  const d=krKm(a,b);if(d<150)return null;let best=null,bs=-1;
   KR.forEach(x=>{const c=x[0];if(c===a||c===b)return;const l1=krKm(a,c),l2=krKm(c,b);if(l1+l2>d*1.12)return;const sc=Math.min(l1,l2)-(krDone(kr(tr()),c)?15:0);if(sc>bs){bs=sc;best=c}});return best}
 const HUBS=['AE','QA','TR','SG','DE','NL','GB','FR','US','JP','CN','TH','ZA','ET','BR','AU','IN','CA','MX','KE','EG','ES','PA','CL'];
 function pickViaW(a,b){const d=kmBetween(a,b);if(d<7000)return null;let best=null,bs=-1;
@@ -117,8 +118,9 @@ function postArrive(ev){const T=tr(),K=kr(T),R=RT();ev.ts=Date.now();
       if(a.i>=r.stops.length-1){R.done[r.id]=dk(today0());R.act=null;ev.route=r.name}
       else if(ev.w==='kr'){K.to=r.stops[a.i+1];K.cls=1;K.hold=false}else{T.to=r.stops[a.i+1];T.cls=2;T.hold=false}}
     else R.act=null}
-  if(ev.w==='kr'&&!K.to&&K.final){K.to=K.final;K.final=null;K.hold=true}
-  if(ev.w==='w'&&!T.to&&T.final){T.to=T.final;T.final=null;T.hold=true}
+  // 경유지에 도착하면 다시 승차 수속을 받지 않고, 고른 좌석 등급 그대로 다음 구간을 이어 간다 (예전엔 hold=true로 멈춰서 마일리지가 있어도 끝나지 않았음)
+  if(ev.w==='kr'&&!K.to&&K.final){const nx=pickViaKr(K.at,K.final);if(nx&&nx!==K.final&&nx!==K.at)K.to=nx;else{K.to=K.final;K.final=null}K.cls=ev.cls||0;K.hold=false}
+  if(ev.w==='w'&&!T.to&&T.final){T.to=T.final;T.final=null;T.cls=ev.cls||0;T.hold=false}
   ev.hid=evalHidden(ev);ev.secret=!!(SECKM[ev.t]||SECWM[ev.t]);ev.certs=newCerts()}
 /* ---------- 히든 도전 과제 ---------- */
 const HI={ // 24x24 선 아이콘
