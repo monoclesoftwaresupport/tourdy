@@ -1084,7 +1084,7 @@ button.ks-stamp:focus-visible{outline-offset:2px}
 .bx-sh svg{width:11px;height:11px}
 .bx-sr{display:flex;justify-content:space-between;align-items:center;gap:8px}.bx-sr b{font-size:17px;font-weight:900}.bx-sr svg{width:14px;height:14px}
 .bx-kv{display:grid;grid-template-columns:1fr 1fr;gap:4px}.bx-kv small,.bx-big small{display:block;font-size:9px;font-weight:700;color:#6b7280}.bx-kv b{font-size:12px;font-weight:800}
-.bx-big b{display:block;font-size:20px;font-weight:900;color:#1d6fd8;line-height:1.15;word-break:keep-all;overflow-wrap:anywhere}
+.bx-big b{display:block;font-size:20px;font-weight:900;color:#1d6fd8;line-height:1.15;white-space:nowrap} /* 긴 지명은 줄바꿈 대신 js/ticket-fit.js가 글자 크기를 줄임 */
 @media (max-width:480px){
   .bx{grid-template-columns:1fr}.bx-main{border-radius:14px 14px 0 0}
   .bx-stub{border-radius:0 0 14px 14px;border-left:0;border-top:2px dashed #c3c9d2;grid-template-columns:1fr;padding:12px 16px 14px}
