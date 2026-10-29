@@ -1084,12 +1084,15 @@ button.ks-stamp:focus-visible{outline-offset:2px}
 .bx-sh svg{width:11px;height:11px}
 .bx-sr{display:flex;justify-content:space-between;align-items:center;gap:8px}.bx-sr b{font-size:17px;font-weight:900}.bx-sr svg{width:14px;height:14px}
 .bx-kv{display:grid;grid-template-columns:1fr 1fr;gap:4px}.bx-kv small,.bx-big small{display:block;font-size:9px;font-weight:700;color:#6b7280}.bx-kv b{font-size:12px;font-weight:800}
-.bx-big b{display:block;font-size:20px;font-weight:900;color:#1d6fd8;line-height:1.15;white-space:nowrap} /* 긴 지명은 줄바꿈 대신 js/ticket-fit.js가 글자 크기를 줄임 */
+.bx-big b{display:block;font-size:20px;font-weight:900;color:#1d6fd8;line-height:1.15;white-space:nowrap}
+/* 긴 지명·글자는 줄바꿈 대신 js/ticket-fit.js가 글자 크기를 줄여 한 줄에 맞춤 */
+.bx-big small,.bx-kv small,.bx-kv b,.bx-route em,.bx-loc,.tk-stub b,.tk-route b{white-space:nowrap;min-width:0;max-width:100%}
+.bx-tag{display:inline-block;white-space:nowrap} /* 좁으면 '날짜' 다음 줄에 '· 특별 루트'가 통째로 내려감 */
 @media (max-width:480px){
   .bx{grid-template-columns:1fr}.bx-main{border-radius:14px 14px 0 0}
   .bx-stub{border-radius:0 0 14px 14px;border-left:0;border-top:2px dashed #c3c9d2;grid-template-columns:1fr;padding:12px 16px 14px}
   .bx-code{height:30px;background:repeating-linear-gradient(90deg,#15171c 0 2px,transparent 2px 3px,#15171c 3px 4px,transparent 4px 7px,#15171c 7px 10px,transparent 10px 11px,#15171c 11px 12px,transparent 12px 15px)}
-  .bx-sum{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:8px 16px}.bx-sr{justify-content:flex-start;gap:10px}.bx-sr svg{width:16px;height:16px}.bx-sh{grid-column:1/-1}
+  .bx-sum{display:grid;grid-template-columns:auto auto minmax(0,1fr);align-items:center;gap:8px 16px}.bx-big{min-width:0;text-align:right}.bx-sum.bx-long .bx-big{grid-column:1/-1;text-align:left} /* 긴 지명은 한 줄 전체를 씀 (js/ticket-fit.js) */.bx-sr{justify-content:flex-start;gap:10px}.bx-sr svg{width:16px;height:16px}.bx-sh{grid-column:1/-1}
   .bx-hd{padding:9px 14px}.bx-bp{font-size:10px;letter-spacing:.06em}.bx-body{padding:14px}
   .bx-route b{font-size:30px}.bx-mid{height:48px}.bx-pl svg{width:26px;height:26px}
   .bx-info{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px 6px;padding:9px 10px}.bx-info b{font-size:12px}

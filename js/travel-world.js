@@ -129,7 +129,7 @@ function bpTicket(f,t,p,left,cost,done,o={}){const A=NAT[f],B=NAT[t],km=kmBetwee
   const viaTxt=o.final&&NAT[o.final]?`<span class="bx-via">경유 → 최종 ${ap(o.final)}</span>`:'';
   return `<div class="bx tx bx-${m} bx-c${ci}${o.gold?' gold':''}${o.torn?' torn':''}${SECWM[t]?' secret-ticket':''}">
     <div class="bx-main tx-main">
-      <div class="bx-hd"><span class="bx-date">${date}${o.free?' · 첫 여행 선물':SECWM[t]?' · ✦ 비밀 목적지':o.gold?' · 특별 루트':''}</span><span class="bx-bp">${lbl}${PL}</span></div><div class="tx-bg" aria-hidden="true">${worldArt(t)}</div>
+      <div class="bx-hd"><span class="bx-date">${date}${o.free?' <span class="bx-tag">· 첫 여행 선물</span>':SECWM[t]?' <span class="bx-tag">· ✦ 비밀 목적지</span>':o.gold?' <span class="bx-tag">· 특별 루트</span>':''}</span><span class="bx-bp">${lbl}${PL}</span></div><div class="tx-bg" aria-hidden="true">${worldArt(t)}</div>
       <div class="bx-body">
         <div class="bx-route"><div><small>FROM</small><b>${ap(f)}</b><em>${A[2]}</em><span>${flag(f)} ${A[1]}</span></div>
           <div class="bx-mid"><div class="bx-line"><i style="width:${p*100}%"></i></div><span class="bx-pl" style="left:calc(${p} * (100% - 40px) + 20px)">${PL}</span></div>
