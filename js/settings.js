@@ -17,7 +17,6 @@ const SET_ITEMS=[
   ['daystart','하루의 시작',()=>DS?`${ampm(new Date(2000,0,1,DS).getTime())}`:'자정'],
   ['week','한 주의 시작',()=>DOW[wkStart()]+'요일'],
   ['dday','D-day',()=>S.dday?`${S.dday.name||'D-day'} · ${S.dday.date.slice(5).replace('-','/')}`:'없음'],
-  ['rep','반복 할 일',()=>S.repeats.length?`${S.repeats.length}개`:'없음'],
   ['backup','백업',()=>''],
   ['ex','예시 데이터',()=>'지우기'],
 ];
@@ -27,7 +26,7 @@ function renderSet(){
   // PIP는 PC·맥에서만. 아이폰·아이패드·안드로이드(앱·브라우저 모두)에서는 숨긴다.
   // 아이패드 사파리는 맥처럼 보고하므로 터치 지점 수로 구분한다
   const pipAllowed=()=>!window.TourdyNative&&!/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)&&!(/Mac/.test(navigator.platform)&&navigator.maxTouchPoints>1);
-  const IT=Object.fromEntries(SET_ITEMS.map(x=>[x[0],x])),GR=[['타이머 설정',['goal','notify','extra','theme','pip','daystart','week','dday','rep']],['여행 설정',['travel','sound','mile']],['계정',['account','invite']],['기타',['backup','ex']]];
+  const IT=Object.fromEntries(SET_ITEMS.map(x=>[x[0],x])),GR=[['타이머 설정',['goal','notify','extra','theme','pip','daystart','week','dday']],['여행 설정',['travel','sound','mile']],['계정',['account','invite']],['기타',['backup','ex']]];
   $('setItems').innerHTML=GR.map(([g,ks])=>{const rows=ks.filter(k=>IT[k]&&(k!=='ex'||ex)&&(k!=='pip'||pipAllowed())).map(k=>{const [,t,v]=IT[k];return `<li><button data-go="${k}"><span class="sl-t">${t}</span><span class="sl-v">${esc(v())}</span>${CHEV_R}</button></li>`}).join('');
     return rows?`<li class="sl-g">${g}</li>${rows}`:''}).join('');
   $('setList').hidden=!!setPage;$('setBack').hidden=!setPage;
@@ -49,7 +48,6 @@ function renderSet(){
   if(setPage==='daystart'){const H=[0,1,2,3,4,5,6,7,8];
     buildWheel($('wDay'),H.map(h=>h?`${ampm(new Date(2000,0,1,h).getTime())} 부터`:'자정 (오전 12:00) 부터'),Math.max(0,H.indexOf(DS)),i=>{S.dayStart=H[i];DS=H[i];save();view=today0();todoDay=today0();lastDay=dk(today0());dayNote();renderAll()});dayNote()}
   if(setPage==='week')$('weekSeg').innerHTML=[1,2,3,4,5,6,0].map(d=>`<button data-wd="${d}" aria-pressed="${d===wkStart()}">${DOW[d]}</button>`).join('');
-  if(setPage==='rep')renderReps();
   if(setPage==='dday'&&S.dday){$('ddName').value=S.dday.name;$('ddDate').value=S.dday.date}
 }
 function dayNote(){$('dayNote').textContent=DS?`새벽 ${DS}시 전까지 공부한 시간은 전날 기록으로 쳐요. 할 일의 '오늘', 분석, 공부 잔디, 타임라인이 모두 이 기준을 따라요.`:'자정을 기준으로 날짜가 바뀌어요. 밤샘 공부를 전날로 치고 싶으면 새벽 시각을 골라 보세요.'}
@@ -146,16 +144,17 @@ function renderReps(){
   $('reps').innerHTML=S.repeats.map(r=>{const s=r.sid&&subj(r.sid);
     const days=r.days.length===7?'매일':r.days.slice().sort().map(d=>DOW[d]).join('·');
     return `<li data-id="${r.id}"><span class="rtx">${esc(r.text)}</span><span class="rmeta">${days}${s?' · '+esc(s.name):''}${/\{n\}/.test(r.text)?` · 오늘 ${repText(r,today0())}`:''}</span>
-      <button class="del${armed===r.id?' arm':''}" data-rep="del">${armed===r.id?'삭제 확인':'삭제'}</button></li>`}).join('')||'<li class="empty" style="border:0">반복 할 일이 없어요</li>';
+      <button class="del${armed===r.id?' arm':''}" data-rep="del">${armed===r.id?'삭제 확인':'삭제'}</button></li>`}).join('')||'<li class="empty" style="border:0">반복 할 일이 없어요. 아래에서 만들어 보세요</li>';
+  $('repN0').textContent=S.repeats.length||'';
   $('repDays').innerHTML=[1,2,3,4,5,6,0].map(d=>`<button type="button" data-d="${d}" aria-pressed="${repDays.includes(d)}">${DOW[d]}</button>`).join('');
 }
 $('reps').addEventListener('click',e=>{const b=e.target.closest('[data-rep]');if(!b)return;const id=b.closest('li').dataset.id;
-  if(armed===id){S.repeats=S.repeats.filter(r=>r.id!==id);armed=null;save()}else armed=id;renderReps()});
+  if(armed===id){S.repeats=S.repeats.filter(r=>r.id!==id);armed=null;save();toast('반복 할 일을 지웠어요. 이미 들어간 할 일은 그대로 남아요')}else armed=id;renderReps()});
 $('repDays').addEventListener('click',e=>{const b=e.target.closest('[data-d]');if(!b)return;const d=+b.dataset.d;
   repDays=repDays.includes(d)?repDays.filter(x=>x!==d):[...repDays,d];renderReps()});
 $('repForm').addEventListener('submit',e=>{e.preventDefault();const t=$('repText').value.trim();if(!t||!repDays.length)return;
   S.repeats.push({id:uid(),text:t,sid:$('repSub').value||null,days:repDays.slice(),startN:parseInt($('repN').value)||0,startDate:dk(today0())});
-  $('repText').value='';save();renderReps()});
+  $('repText').value='';save();renderReps();renderTasks();toast('반복 할 일을 만들었어요')});
 
 $('bkCopy').onclick=()=>{const txt=JSON.stringify(S);
   navigator.clipboard.writeText(txt).then(()=>{$('bkMsg').textContent='클립보드에 복사했어요. 메모 앱 등에 붙여 넣어 보관하세요.'})

@@ -1750,3 +1750,66 @@ body.tour-active>:not(#tourDialog){pointer-events:none!important}
 .wkr-list{list-style:none;margin:0 0 8px;padding:0;text-align:left}
 .wkr-list li{display:flex;justify-content:space-between;padding:9px 4px;border-bottom:1px solid var(--line);font-size:14px}.wkr-list li b{color:var(--accent)}
 .wk-result #wkResultOk{width:100%;margin-top:8px}
+/* 할 일 한번에 여러 개 생성 */
+.multi-open{align-self:flex-start;margin-top:-6px;padding:6px 4px}
+.multi{display:flex;flex-direction:column;gap:10px;background:var(--hover);border-radius:18px;padding:14px}
+.multi-top{display:flex;flex-direction:column;gap:2px}
+.multi-top b{font-size:15px;font-weight:700}
+.multi-q{display:flex;flex-wrap:wrap;gap:6px}
+.multi-q button{font-size:13px;font-weight:600;background:var(--surface);border-radius:999px;padding:6px 12px}
+.multi-q button[data-mq="clear"]{color:var(--faint)}
+.multi .multi-cal{background:var(--surface);margin:0;border-radius:14px;padding:12px}
+.multi-sum{font-weight:600;color:var(--muted)}
+.multi-a{display:flex;justify-content:flex-end;gap:8px}
+.multi-a .primary:disabled{opacity:.45;cursor:default}
+/* 할 일 탭의 반복 할 일 */
+#repPanel .panel-head .note{flex-basis:100%}
+.rep-add summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:6px;font-size:15px;font-weight:700;color:var(--accent);padding:4px 0}
+.rep-add summary::-webkit-details-marker{display:none}
+.rep-add summary svg{width:13px;height:13px;transition:transform .2s;transform:rotate(-90deg)}
+.rep-add[open] summary svg{transform:none}
+.rep-add .addsub{margin-top:10px;border:0;background:var(--hover);border-radius:16px}
+.rep-add .addsub .field{background:var(--surface)}
+.reps li{border-radius:12px}
+/* 반복 할 일 요일 버튼: 가로 폭에 맞춰 7칸 균등 배치 */
+#repDays{flex:1 1 100%;width:100%;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+#repDays button{width:100%;height:40px;border-radius:12px;font-size:14px;font-weight:700;background:var(--surface)}
+#repDays button[aria-pressed="true"]{background:var(--accent);color:#fff}
+/* 첫 여행 선물 박스: 내용 사이 여백 줄이기 */
+.first-trip-notice{gap:6px;padding:18px 20px}
+.first-trip-notice h2{margin:0;font-size:20px;line-height:1.35}
+.first-trip-notice p{margin:2px 0 0;line-height:1.55}
+.first-trip-notice small{margin-top:4px}
+.first-trip-notice .primary{margin-top:6px;align-self:flex-start}
+/* 과목 선택 버튼 + 선택 창 */
+select.sp-native{display:none!important}
+.subpick{display:inline-flex;align-items:center;gap:8px;min-width:0;max-width:100%;border:0;background:var(--hover);border-radius:10px;padding:6px 10px 6px 6px;font-size:14px;font-weight:600;color:var(--ink);text-align:left}
+.subpick.field{padding:6px 10px 6px 6px}
+.addtask .subpick{background:var(--surface);max-width:9.5em;flex:none}
+.subpick:disabled{opacity:.5;cursor:default}
+.subpick .sp-bn{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.subpick.none .sp-bn{color:var(--faint)}
+.subpick .sp-chev{width:12px;height:12px;flex:none;color:var(--faint)}
+.sp-ic.sm{width:26px;height:26px}.sp-ic.sm svg{width:14px;height:14px}
+.sp-ic.none{color:var(--faint);background:var(--track)}
+.recrow .subpick{width:100%;height:100%;min-height:2.75em}
+@media (max-width:620px){.recrow .subpick{grid-column:1/-1}}
+.sp-dlg{border:0;padding:0;background:var(--surface);color:var(--ink);border-radius:22px;width:min(420px,calc(100vw - 32px));max-height:min(78vh,640px);box-shadow:0 20px 60px rgba(0,0,0,.35)}
+.sp-dlg[open]{display:flex;flex-direction:column}
+.sp-dlg::backdrop{background:rgba(0,0,0,.45)}
+@media (max-width:560px){.sp-dlg{margin:auto 0 0;width:100%;max-width:none;border-radius:22px 22px 0 0;padding-bottom:env(safe-area-inset-bottom,0px)}}
+.sp-h{display:flex;align-items:center;justify-content:space-between;padding:18px 18px 8px}
+.sp-h b{font-size:18px;font-weight:800}
+.sp-x{width:34px;height:34px;display:grid;place-items:center;border-radius:10px;color:var(--faint)}
+.sp-list{list-style:none;margin:0;padding:4px 10px 8px;overflow-y:auto;display:flex;flex-direction:column;gap:2px}
+.sp-g{font-size:12.5px;font-weight:700;color:var(--muted);padding:10px 8px 4px}
+.sp-op{width:100%;display:flex;align-items:center;gap:12px;padding:10px 8px;border-radius:14px;text-align:left}
+@media (hover:hover) and (pointer:fine){.sp-op:hover{background:var(--hover)}}
+.sp-op.on{background:color-mix(in srgb,var(--c) 14%,var(--surface))}
+.sp-op:disabled{opacity:.45;cursor:default}
+.sp-n{flex:1;min-width:0;font-size:16px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sp-ck{width:22px;height:22px;display:grid;place-items:center;border-radius:50%;flex:none}
+.sp-op.on .sp-ck{background:var(--c);color:#fff}
+.sp-ck svg{width:11px;height:11px}
+.sp-empty{padding:0 18px 6px}
+.sp-new{margin:4px 18px 18px;padding:12px;border-radius:12px;background:var(--hover);color:var(--accent);font-weight:700;font-size:14px}

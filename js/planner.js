@@ -10,7 +10,10 @@ function renderRecords(){
     return `<li data-id="${x.id}"><span class="rt">${hm(x.start)}–${x.live?'지금':hm(x.end)}</span><span class="rn"><span class="dot" style="--c:${col}"></span>${nm}${x.ex?' <span class="exbadge">예시</span>':''}${x.noMile?' <span class="exbadge">마일리지 제외</span>':''}${x.memo?`<small class="rmemo">${esc(x.memo)}</small>`:''}</span><span class="rd">${fmt(x.end-x.start)}</span>${act}</li>`;
   }).join('')||'<li class="empty" style="border:0">이 날 기록이 없어요</li>';
 }
-function fillRecSub(sel){const subs=liveSubs().length;$('recSub').innerHTML=`<optgroup label="공부">${subs?subOpts(sel):'<option value="" disabled>프리셋 목록에서 과목을 먼저 만들어 주세요</option>'}</optgroup><optgroup label="쉬는 시간"><option value="k:rest" ${sel==='k:rest'?'selected':''}>휴식</option><option value="k:waste" ${sel==='k:waste'?'selected':''}>딴짓</option></optgroup>`;if(!sel&&subs)$('recSub').value=liveSubs()[0].id}
+function fillRecSub(sel){const subs=liveSubs().length;
+  // 과목이 하나도 없을 때 저절로 골라진 '휴식'은, 과목이 생기면 첫 과목으로 바꾼다 (기록 수정 중이 아닐 때)
+  if(subs&&!editRec&&sel&&sel.startsWith('k:')&&![...$('recSub').options].some(o=>o.value&&!o.value.startsWith('k:')))sel='';
+  $('recSub').innerHTML=`<optgroup label="공부">${subs?subOpts(sel):'<option value="" disabled>프리셋 목록에서 과목을 먼저 만들어 주세요</option>'}</optgroup><optgroup label="쉬는 시간"><option value="k:rest" ${sel==='k:rest'?'selected':''}>휴식</option><option value="k:waste" ${sel==='k:waste'?'selected':''}>딴짓</option></optgroup>`;if(!sel&&subs)$('recSub').value=liveSubs()[0].id}
 function resetRecForm(){editRec=null;$('recD').value=dk(today0());$('recD').max=dk(today0());$('recMemo').value='';$('recFormTitle').textContent='직접 기록 추가';$('recSave').textContent='추가';$('recCancel').hidden=true;$('recErr').hidden=true;const now=hm(Date.now());$('recS').value=now;$('recE').value=now}
 // 기록 칸을 열 때마다 시작·끝을 지금 시각으로 맞춘다 (수정 중일 때는 그대로)
 $('recWrap').addEventListener('toggle',()=>{if(!$('recWrap').open||editRec)return;const now=hm(Date.now());$('recS').value=now;$('recE').value=now});
@@ -90,7 +93,7 @@ function renderTasks(){
   $('taskCount').textContent=l.length?`${done.length} / ${l.length} 완료`:'';
   $('taskTitle').textContent=isTodoToday()?'오늘 할 일':'할 일';
   const pc=isTodoToday()&&!S.carryOff[dk(todoDay)]?pendingCarry():[];
-  $('carry').hidden=true;renderMissed();renderPva();renderBooks();
+  $('carry').hidden=true;renderMissed();renderPva();renderBooks();if(typeof renderReps==='function')renderReps();
   if(editTask){const i=$('e-'+editTask);if(i){i.focus();i.setSelectionRange(i.value.length,i.value.length)}}
 }
 $('carryGo').onclick=()=>{const l=list();for(const [k,t] of pendingCarry()){S.tasks[k].splice(S.tasks[k].indexOf(t),1);l.unshift(t)}save();renderTasks()};

@@ -62,7 +62,7 @@ const kmBetween=(a,b)=>{const A=NAT[a],B=NAT[b],r=Math.PI/180,dl=(B[3]-A[3])*r,d
   const h=Math.sin(dl/2)**2+Math.cos(A[3]*r)*Math.cos(B[3]*r)*Math.sin(dg/2)**2;return 2*6371*Math.asin(Math.sqrt(h))};
 const flightMin=(a,b)=>Math.max(30,Math.round(kmBetween(a,b)/800*60)); // 평균 800km/h, 최소 30분
 const MILE_MS=6*6e4; // 공부 6분 = 1 마일리지
-const TRAVEL_TEST=false; // 테스트용 버튼 표시. 출시 전 false로
+const TRAVEL_TEST=true; // 테스트용 버튼 표시. 출시 전 false로
 function tr(){const T=S.travel||(S.travel={on:true,at:'KR',to:null,used:0,km:0,stamps:[],news:[]});if(!T.ver){T.on=true;T.ver=2}return T} // 여행 탭은 기본으로 켜짐
 function totalMiles(){const pd=perDay(true);let m=0;for(const k in pd)m+=Math.min(pd[k].study,8*36e5)/MILE_MS;return m+bonusList(pd).reduce((a,b)=>a+b.m,0)}
 /* 보너스 마일리지: 하루 8시간 +50 · 7일 연속 +100 · 30일 연속 +1000 (공부 기록으로 계산) */
