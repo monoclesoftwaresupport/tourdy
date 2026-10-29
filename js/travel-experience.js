@@ -222,7 +222,10 @@ applyNeon();
 /* ---------- 탑승 수속: 목적지를 고르면 등급을 먼저 묻고, 게이트가 열린 뒤 출발 ---------- */
 const CKVERB={air:['탑승 수속 중','게이트 오픈 · 탑승 시작'],ntrain:['승차권 확인 중','개찰 시작 · 침대칸 탑승'],cruise:['승선 수속 중','승선 게이트 오픈'],train:['승차권 확인 중','개찰 시작 · 열차 탑승'],bus:['승차권 확인 중','승차 시작'],ship:['승선 수속 중','승선 시작']};
 var ckW=null,ckSel=0,ckBusy=false;
-function openCheckin(w){const T=tr(),K=kr(T),o=w==='kr'?K:T;if(!o.to||!o.hold)return;ckW=w;ckSel=o.cls||0;ckBusy=false;renderCheckin();$('ckin').hidden=false}
+function openCheckin(w){const T=tr(),K=kr(T),o=w==='kr'?K:T;if(!o.to||!o.hold)return;
+  // 경유를 켜기 전에 고른 여정·예전에 저장된 여정도 승차 수속 때 경유지로 나눈다 (특별 루트 구간은 그대로)
+  if(TOPT().via&&!o.final&&!(RT().act&&ROUTE[RT().act.id]&&ROUTE[RT().act.id].w===w)){const v=w==='kr'?pickViaKr(o.at,o.to):pickViaW(o.at,o.to);if(v&&v!==o.to&&v!==o.at){o.final=o.to;o.to=v;save()}}
+  ckW=w;ckSel=o.cls||0;ckBusy=false;renderCheckin();$('ckin').hidden=false}
 function renderCheckin(){const w=ckW,T=tr(),K=kr(T),o=w==='kr'?K:T,avail=totalMiles()-T.used;if(!o.to)return closeCheckin();
   const m=w==='kr'?krMode(o.at,o.to):wMode(o.at,o.to),L=w==='kr'?KCLS[m]:WCLS[m],MU=w==='kr'?KMUL:WMUL,base=w==='kr'?krCost(o.at,o.to):flightMin(o.at,o.to);
   const from=w==='kr'?KRM[o.at][1]:`${ap(o.at)} ${NAT[o.at][2]}`,to=w==='kr'?KRM[o.to][1]:`${ap(o.to)} ${NAT[o.to][2]}`,ic=w==='kr'?krIcon(m):wIcon(m),gold=goldLeg(w,o.at,o.to);
