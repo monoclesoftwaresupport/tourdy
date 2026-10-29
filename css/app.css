@@ -698,7 +698,7 @@ details.rec summary,.donehead{font-size:16px;font-weight:700}
   background-size:260px 260px;color:#e8ecff;border-radius:22px;padding:22px 20px;display:flex;flex-direction:column;gap:16px}
 .planet{width:var(--s);height:var(--s);border-radius:50%;background:var(--p);box-shadow:inset calc(var(--s)*-.18) calc(var(--s)*-.14) 0 rgba(0,0,0,.28);flex:none;position:relative;display:inline-block}
 .planet[data-id="saturn"]::after{content:"";position:absolute;left:-28%;right:-28%;top:42%;height:16%;border:max(1.5px,calc(var(--s)*.05)) solid #c9b27a;border-radius:50%;transform:rotate(-18deg)}
-.planet[data-id="iss"]{border-radius:6px;box-shadow:none;background:linear-gradient(90deg,#5b7bd6 0 30%,var(--p) 30% 70%,#5b7bd6 70%)}
+ /* 태양전지판 4쌍 + 트러스 + 가운데 모듈 */
 .planet[data-id="beyond"]{background:radial-gradient(circle at 50% 50%,#fff 0 8%,var(--p) 9% 40%,transparent 41%),radial-gradient(circle,rgba(139,108,255,.35) 0 70%,transparent 71%);box-shadow:none}
 .sp-news{background:rgba(139,108,255,.22);border-radius:14px;padding:12px 14px;font-weight:700;display:flex;gap:8px;align-items:center}
 .sp-news svg{width:18px;height:18px}
@@ -876,7 +876,7 @@ details.rec summary,.donehead{font-size:16px;font-weight:700}
 .sp-row .sc small{font-size:11px;color:#aab3e0;white-space:nowrap}
 .sp-hint{margin:0;font-size:12px;color:#8f99c9}
 .planet.moon{box-shadow:inset calc(var(--s)*-.2) calc(var(--s)*-.15) 0 rgba(0,0,0,.35)}
-.planet.station{border-radius:6px;box-shadow:none;background:linear-gradient(90deg,#5b7bd6 0 30%,var(--p) 30% 70%,#5b7bd6 70%);transform:scaleY(.5)}
+.planet.station{border-radius:0;box-shadow:none;background:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 40'><g fill='%232f5fb8' stroke='%238fb0ff' stroke-width='.8'><rect x='3' y='3' width='9' height='14'/><rect x='3' y='23' width='9' height='14'/><rect x='14' y='3' width='9' height='14'/><rect x='14' y='23' width='9' height='14'/><rect x='41' y='3' width='9' height='14'/><rect x='41' y='23' width='9' height='14'/><rect x='52' y='3' width='9' height='14'/><rect x='52' y='23' width='9' height='14'/></g><g stroke='%238fb0ff' stroke-width='.5' opacity='.7'><path d='M3 10h9M14 10h9M41 10h9M52 10h9M3 30h9M14 30h9M41 30h9M52 30h9'/></g><rect x='2' y='18.6' width='60' height='2.8' fill='%23cfd8e3'/><rect x='27' y='13' width='10' height='14' rx='2' fill='%23eef2f7'/><rect x='29.5' y='6' width='5' height='7' rx='1.2' fill='%23d6dde7'/><rect x='29.5' y='27' width='5' height='7' rx='1.2' fill='%23d6dde7'/><rect x='24' y='15' width='3' height='10' fill='%23b9c3cf'/><rect x='37' y='15' width='3' height='10' fill='%23b9c3cf'/><circle cx='32' cy='20' r='1.6' fill='%235b7bd6'/></svg>") center/contain no-repeat;filter:drop-shadow(0 0 2px rgba(143,176,255,.5))}
 .planet.sun{background:radial-gradient(circle,#fff6c4 0 25%,var(--p) 55%,#ff8a1f 75%);box-shadow:0 0 calc(var(--s)*.5) #ffb02e}
 .planet.comet{background:radial-gradient(circle at 75% 50%,#fff 0 18%,var(--p) 26%,transparent 34%),linear-gradient(90deg,transparent 0,color-mix(in srgb,var(--p) 55%,transparent) 70%,transparent 76%);border-radius:40%;box-shadow:none}
 .planet.belt{background:radial-gradient(circle,transparent 0 40%,var(--p) 41% 43%,transparent 45% 58%,color-mix(in srgb,var(--p) 60%,transparent) 59% 61%,transparent 63%);box-shadow:none}
@@ -1923,3 +1923,4 @@ button.spm-n{cursor:pointer}button.spm-n:hover{opacity:1}
   .spa.stamp .spa-patch{animation:none;opacity:1;transform:translate(-50%,-50%) rotate(-8deg)}
 }
 .spm-c{flex-direction:column-reverse}
+.spl #spSkipL{min-width:160px;padding:0 36px} /* 발사 카운트다운: 건너뛰기 버튼 가로 여백 */
