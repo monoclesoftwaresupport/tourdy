@@ -1816,3 +1816,4 @@ select.sp-native{display:none!important}
 .sp-ck svg{width:11px;height:11px}
 .sp-empty{padding:0 18px 6px}
 .sp-new{margin:4px 18px 18px;padding:12px;border-radius:12px;background:var(--hover);color:var(--accent);font-weight:700;font-size:14px}
+.invite-login{margin-top:14px} /* 친구 초대: 안내 문장과 버튼 사이 여백 */

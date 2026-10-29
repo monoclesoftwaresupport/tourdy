@@ -1,9 +1,9 @@
 /* ---------- 친구 초대 ----------
-   - 로그인하면 내 초대 코드(6자리)를 받는다. 친구가 가입 후 14일 안에 내 코드를 입력하면 둘 다 100 마일리지.
+   - 로그인하면 내 초대 코드(6자리)를 받는다. 친구가 가입 후 14일 안에 내 코드를 입력하면 둘 다 500 마일리지.
    - 보상은 서버가 기록하고, 앱은 그 목록을 받아 S.gifts에 고유 id로 넣는다 → 여러 기기에서 받아도 한 번만 들어간다.
    - 초대한 사람 보상은 친구 10명까지. 서로의 코드를 맞바꾸는 건 막는다. */
 (function(){
-  const REWARD=100,MAX=10;
+  const REWARD=500,MAX=10;
   let info=null,busy=false,msg='',err='';
   const A=()=>window.TourdyAccount;
   const sb=()=>A()&&A().client&&A().client();
@@ -52,7 +52,7 @@
     const box=$('inviteBody');if(!box)return;
     if(!me()){
       box.innerHTML=`<p class="note">친구가 내 초대 코드를 입력하면 <b>둘 다 ${REWARD} 마일리지</b>를 받아요. 초대 코드는 로그인하면 받을 수 있어요.</p>
-        <button class="primary" id="inviteLogin">로그인하러 가기</button>`;
+        <button class="primary invite-login" id="inviteLogin">로그인하러 가기</button>`;
       return;
     }
     const left=Math.max(0,MAX-((info&&info.invited)||0));
