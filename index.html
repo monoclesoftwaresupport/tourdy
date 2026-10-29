@@ -85,6 +85,7 @@
           <div class="pacts" id="planActs" hidden><button class="on" id="planResume" hidden>이어서 공부</button><button class="on" id="planSkip" hidden>휴식 건너뛰기</button><div class="pacts-off" id="planOff"><button data-k="rest" aria-pressed="false">휴식</button><button data-k="waste" aria-pressed="false">딴짓</button></div><button id="planExt">5분 연장</button><button id="planEnd">지금 끝내기</button></div>
         </div>
         <div class="goalrow" id="goalRow" hidden><div class="goaltxt"><span id="goalTxt"></span><b id="goalPct"></b></div><div class="pbar"><i id="goalFill"></i></div></div>
+        <div class="tdest" id="todayDest" hidden></div>
         <div class="tl"><div class="tl-bar" id="tl"></div><div class="tl-axis" id="tlAxis"></div></div>
         <div class="eff" id="eff"></div>
         <details class="rec" id="recWrap">
@@ -368,6 +369,17 @@
     <div class="sync-opt"><b>다른 기기 (서버)</b><span id="syncCloud"></span><small id="syncCloudMeta"></small></div>
     <div class="sync-acts"><button type="button" class="primary" id="syncUseCloud">다른 기기 기록 가져오기</button><button type="button" class="secondary" id="syncUseLocal">이 기기 기록으로 맞추기</button><button type="button" class="secondary" id="syncLater">나중에</button></div>
   </dialog>
+  <dialog id="forgotDialog" class="tour forgot-dialog" aria-labelledby="forgotTitle">
+    <h2 id="forgotTitle">아직 공부 중인가요?</h2>
+    <p id="forgotText"></p>
+    <div class="forgot-edit" id="forgotEdit" hidden>
+      <label for="forgotEnd">실제로 끝난 시각</label>
+      <input class="field" type="datetime-local" id="forgotEnd" step="60">
+      <p class="err" id="forgotErr" role="alert" hidden></p>
+      <button type="button" class="primary" id="forgotSave">이 시각까지만 기록</button>
+    </div>
+    <div class="forgot-acts"><button type="button" class="primary" id="forgotKeep">계속 공부 중이에요</button><button type="button" class="secondary" id="forgotStop">지금 끝내기</button><button type="button" class="secondary" id="forgotFix">끝난 시각 고치기</button></div>
+  </dialog>
   <dialog id="wkResult" class="tour wk-result" aria-labelledby="wkResultTitle">
     <h2 id="wkResultTitle">지난주 챌린지 결과</h2>
     <div id="wkResultBody"></div>
@@ -422,6 +434,8 @@
 <script src="js/multi-add.js"></script>
 <script src="js/subject-picker.js"></script>
 <script src="js/first-trip.js"></script>
+<script src="js/forgot-timer.js"></script>
+<script src="js/today-dest.js"></script>
 <script src="js/app.js"></script>
 <script src="js/tutorial.js"></script>
 <script src="js/vendor/supabase.js"></script>

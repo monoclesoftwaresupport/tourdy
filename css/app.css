@@ -1819,3 +1819,15 @@ select.sp-native{display:none!important}
 .invite-login{margin-top:14px} /* 친구 초대: 안내 문장과 버튼 사이 여백 */
 /* 마일리지 설정 > 보너스 마일리지: 카드 안 줄 간격과 위아래 여백 */
 #mileBody .bn-rules{margin-top:8px}#mileBody .bn-rules>div{gap:6px;padding:14px 14px 18px}#mileBody .bn-rules+.note{margin-top:12px;line-height:1.6}
+/* 오늘의 목적지 추천 (홈) */
+.tdest{display:flex;flex-direction:column;gap:8px;margin-top:4px}
+.td-h{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:13px;color:var(--muted)}.td-h span{font-weight:700;color:var(--ink)}.td-h small{font-size:12px;font-variant-numeric:tabular-nums}
+.td-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr));gap:8px}
+.td-row{display:flex;flex-direction:column;align-items:flex-start;gap:3px;min-width:0;text-align:left;background:var(--hover);border:0;border-radius:14px;padding:12px 14px;color:var(--ink);font:inherit;cursor:pointer}
+.td-row b{font-size:16px;font-weight:800;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.td-row span{font-size:13px;font-weight:700;color:var(--accent)}.td-row span em{font-style:normal}.td-row small{font-size:12px;color:var(--muted)}
+.td-row:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+/* 타이머 깜빡 확인 */
+.forgot-dialog p{line-height:1.6}.forgot-edit{display:flex;flex-direction:column;gap:8px;margin:4px 0 12px}.forgot-edit label{font-size:13px;color:var(--muted)}
+.forgot-acts{display:flex;flex-direction:column;gap:8px}
+
+.forgot-dialog[open]{min-height:0}
