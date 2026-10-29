@@ -1758,9 +1758,6 @@ body.tour-active>:not(#tourDialog){pointer-events:none!important}
 .multi{display:flex;flex-direction:column;gap:10px;background:var(--hover);border-radius:18px;padding:14px}
 .multi-top{display:flex;flex-direction:column;gap:2px}
 .multi-top b{font-size:15px;font-weight:700}
-.multi-q{display:flex;flex-wrap:wrap;gap:6px}
-.multi-q button{font-size:13px;font-weight:600;background:var(--surface);border-radius:999px;padding:6px 12px}
-.multi-q button[data-mq="clear"]{color:var(--faint)}
 .multi .multi-cal{background:var(--surface);margin:0;border-radius:14px;padding:12px}
 .multi-sum{font-weight:600;color:var(--muted)}
 .multi-a{display:flex;justify-content:flex-end;gap:8px}

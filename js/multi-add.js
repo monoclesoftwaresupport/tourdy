@@ -3,12 +3,6 @@
   let open=false,month=null,sel=new Set(),msg='';
   const box=$('multiBox'),btn=$('multiOpen');
   const minKey=()=>dk(today0());
-  function quick(kind){
-    const t=today0();sel.clear();
-    if(kind==='7')for(let i=0;i<7;i++)sel.add(dk(addD(t,i)));
-    if(kind==='wd')for(let i=0;i<14;i++){const d=addD(t,i);if(d.getDay()>0&&d.getDay()<6)sel.add(dk(d))}
-    if(kind==='we')for(let i=0;i<28;i++){const d=addD(t,i);if(d.getDay()===0||d.getDay()===6)sel.add(dk(d))}
-  }
   function render(){
     box.hidden=!open;btn.setAttribute('aria-expanded',open);btn.textContent=open?'× 여러 날짜 선택 닫기':'+ 한번에 여러개 생성';
     if(!open)return;
@@ -20,7 +14,6 @@
       g+=`<button type="button" class="cd${d.getMonth()!==m.getMonth()?' out':''}${k===t0?' today':''}${sel.has(k)?' sel':''}" data-md="${k}" ${k<t0?'disabled':''} aria-pressed="${sel.has(k)}" aria-label="${d.getMonth()+1}월 ${d.getDate()}일">${d.getDate()}${dot}</button>`}
     const text=$('taskInput').value.trim(),n=sel.size;
     box.innerHTML=`<div class="multi-top"><b>날짜를 여러 개 골라요</b><span class="note">같은 할 일이 고른 날마다 하나씩 생겨요</span></div>
-      <div class="multi-q"><button type="button" data-mq="7">오늘부터 7일</button><button type="button" data-mq="wd">평일 2주</button><button type="button" data-mq="we">주말 4주</button><button type="button" data-mq="clear">모두 해제</button></div>
       <div class="cal inline multi-cal"><div class="cal-h"><button type="button" data-mm="-1" aria-label="이전 달">${CL}</button><b>${m.getFullYear()}년 ${m.getMonth()+1}월</b><button type="button" data-mm="1" aria-label="다음 달">${CR}</button></div><div class="cal-g">${g}</div></div>
       <p class="note multi-sum">${n?`${n}일 선택됨 · ${[...sel].sort().slice(0,4).map(k=>{const d=pk(k);return `${d.getMonth()+1}/${d.getDate()}`}).join(', ')}${n>4?` 외 ${n-4}일`:''}`:'달력에서 날짜를 눌러 골라 주세요'}</p>
       ${msg?`<p class="err" role="alert">${esc(msg)}</p>`:''}
@@ -40,7 +33,6 @@
   box.addEventListener('click',e=>{
     const d=e.target.closest('[data-md]');if(d&&!d.disabled){const k=d.dataset.md;sel.has(k)?sel.delete(k):sel.add(k);msg='';render();return}
     const mm=e.target.closest('[data-mm]');if(mm){month=new Date(month.getFullYear(),month.getMonth()+ +mm.dataset.mm,1);render();return}
-    const q=e.target.closest('[data-mq]');if(q){quick(q.dataset.mq);msg='';render();return}
     const x=e.target.closest('[data-mx]');if(x){if(x.dataset.mx==='go')commit();else openBox(false)}
   });
   // 할 일 내용을 고치면 추가 버튼 문구만 갱신
