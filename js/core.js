@@ -176,3 +176,15 @@ function bindSearchInput(el,render){
   el.addEventListener('compositionend',()=>{composing=false;schedule();});
   el.addEventListener('input',e=>{if(composing||e.isComposing)return;schedule();});
 }
+
+/* 달력 넘기기: 마우스 휠·트랙패드는 위아래, 터치는 좌우로 밀면 이전/다음 달 (윈도우 작업 표시줄 달력처럼).
+   el 안의 sel(달력 영역)에서만 반응. step(+1/-1)로 달을 바꾼다. 트랙패드의 작은 움직임은 모아서 한 칸씩 */
+function calScroll(el,sel,step){
+  let acc=0,lock=0,tx=null,ty=null;
+  el.addEventListener('wheel',e=>{if(!e.target.closest(sel))return;e.preventDefault();
+    const now=Date.now();acc+=e.deltaMode===1?e.deltaY*30:e.deltaY;
+    if(now<lock||Math.abs(acc)<40)return;step(acc>0?1:-1);acc=0;lock=now+180},{passive:false});
+  el.addEventListener('touchstart',e=>{if(!e.target.closest(sel)||e.touches.length!==1)return tx=null;tx=e.touches[0].clientX;ty=e.touches[0].clientY},{passive:true});
+  el.addEventListener('touchend',e=>{if(tx==null)return;const t=e.changedTouches[0],dx=t.clientX-tx,dy=t.clientY-ty;tx=null;
+    if(Math.abs(dx)>45&&Math.abs(dx)>Math.abs(dy)*1.5)step(dx<0?1:-1)},{passive:true});
+}

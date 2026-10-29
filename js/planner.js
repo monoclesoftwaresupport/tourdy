@@ -168,6 +168,7 @@ $('tdLabelBtn').onclick=e=>{e.stopPropagation();openCal($('cal').hidden)};
 $('cal').addEventListener('click',e=>{e.stopPropagation();
   const c=e.target.closest('[data-cm]');if(c){calMonth=new Date(calMonth.getFullYear(),calMonth.getMonth()+ +c.dataset.cm,1);renderCal();return}
   const d=e.target.closest('[data-day]');if(d){openCal(false);setTodoDay(pk(d.dataset.day))}});
+calScroll($('cal'),'.cal-g,.cal-h',d=>{calMonth=new Date(calMonth.getFullYear(),calMonth.getMonth()+d,1);renderCal()});
 document.addEventListener('click',()=>{if(!$('cal').hidden)openCal(false)});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('cal').hidden){openCal(false);$('tdLabelBtn').focus()}});
 $('addTask').addEventListener('submit',e=>{
