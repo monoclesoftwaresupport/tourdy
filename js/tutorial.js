@@ -37,6 +37,8 @@ const TOUR_STEPS=[
    note:'여행 기능이 마음에 들지 않으면 <b>설정 → 여행</b>에서 언제든 끌 수 있어요. 끄면 여행 탭이 사라지고 공부 기록과 할 일만 쓸 수 있어요. 다시 켜면 그동안 공부한 시간도 그대로 마일리지가 돼요.'}
 ];
 let tourStep=0,tourAnimations=[];
+// 같은 카드 창으로 다른 안내(예: 주간 챌린지)도 보여 준다. opts: {last:'마지막 버튼 글자', finish(), close()}
+let tourSteps=TOUR_STEPS,tourOpts={};
 const tourBackground=new Map();let tourScroll=0;
 function lockTourBackground(lock){
   const d=$('tourDialog');
@@ -53,7 +55,7 @@ function lockTourBackground(lock){
 }
 function changeTourStep(delta){
   const next=tourStep+delta;
-  if(next<0||next>=TOUR_STEPS.length||!$('tourDialog').open)return;
+  if(next<0||next>=tourSteps.length||!$('tourDialog').open)return;
   // Content and controls update immediately. Animation completion never gates input.
   tourAnimations.forEach(a=>a.cancel());tourAnimations=[];
   tourStep=next;renderTour();
@@ -74,8 +76,8 @@ function tourShouldShow(){
   return !S.sessions.some(x=>!x.ex)&&!S.running;
 }
 function renderTour(){
-  const s=TOUR_STEPS[tourStep],last=tourStep===TOUR_STEPS.length-1;
-  $('tourKicker').textContent=`${tourStep+1} / ${TOUR_STEPS.length} · ${s.k}`;
+  const s=tourSteps[tourStep],last=tourStep===tourSteps.length-1;
+  $('tourKicker').textContent=`${tourStep+1} / ${tourSteps.length} · ${s.k}`;
   $('tourArt').innerHTML=s.tickets
     ?`<div class="tour-tks">${TOUR_TICKET('','일반','기본 운임')}${TOUR_TICKET('silver','은색 표','+30%')}${TOUR_TICKET('gold','금색 표','+60%')}</div>`
     :`<div class="tour-ico">${TOUR_ART[s.art]}</div>`;
@@ -86,22 +88,25 @@ function renderTour(){
     :(s.list||[])).map(x=>`<li>${x}</li>`).join('');
   $('tourList').hidden=!s.list&&!s.tickets;
   $('tourNote').innerHTML=s.note||'';$('tourNote').hidden=!s.note;
-  $('tourDots').innerHTML=TOUR_STEPS.map((_,i)=>`<i class="${i===tourStep?'on':''}"></i>`).join('');
+  $('tourDots').innerHTML=tourSteps.map((_,i)=>`<i class="${i===tourStep?'on':''}"></i>`).join('');
   $('tourBack').hidden=tourStep===0;
   $('tourSkip').hidden=last;
-  $('tourNext').textContent=last?(liveSubs().length?'공부 시작하기':'과목 고르러 가기'):'다음';
+  $('tourNext').textContent=last?(tourOpts.last||(liveSubs().length?'공부 시작하기':'과목 고르러 가기')):'다음';
 }
-function openTour(){
+function openTour(steps,opts){
+  tourSteps=Array.isArray(steps)?steps:TOUR_STEPS;tourOpts=Array.isArray(steps)&&opts||{};
   tourStep=0;renderTour();
   const d=$('tourDialog');if(!d.open){lockTourBackground(true);d.showModal();}
 }
 function closeTour(){
   const d=$('tourDialog');tourAnimations.forEach(a=>a.cancel());if(d.open)d.close();lockTourBackground(false);
+  if(tourSteps!==TOUR_STEPS){const o=tourOpts;tourSteps=TOUR_STEPS;tourOpts={};if(o.close)o.close();return}
   if(!S.tutorial){S.tutorial=1;save();if(typeof askNotifyFirstRun==='function')askNotifyFirstRun()}
   renderPresetHint();
 }
 $('tourNext').onclick=()=>{
-  if(tourStep<TOUR_STEPS.length-1){changeTourStep(1);return}
+  if(tourStep<tourSteps.length-1){changeTourStep(1);return}
+  if(tourSteps!==TOUR_STEPS){const f=tourOpts.finish;closeTour();if(f)f();return}
   closeTour();setTab('home');setHome('run');renderPresetHint();window.scrollTo({top:0,behavior:'smooth'});
 };
 $('tourBack').onclick=()=>changeTourStep(-1);
@@ -118,7 +123,7 @@ for(const type of ['click','pointerdown','touchstart','touchmove','wheel','keydo
   d.addEventListener('touchend',e=>{if(x0==null)return;const dx=e.changedTouches[0].clientX-x0,dy=e.changedTouches[0].clientY-y0;x0=null;
     if(Math.abs(dx)<50||Math.abs(dy)>Math.abs(dx))return;changeTourStep(dx<0?1:-1)},{passive:true});
 })();
-$('tourReplay').onclick=openTour;
+$('tourReplay').onclick=()=>openTour();
 if(tourShouldShow())openTour();
 
 /* ---------- 튜토리얼 뒤 홈 안내: 과목(프리셋)이 있어야 타이머로 기록할 수 있어요 ---------- */

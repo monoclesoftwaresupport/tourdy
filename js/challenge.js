@@ -194,7 +194,7 @@
   }
   const RULES=`<ul class="wk-rules">
     <li>매주 월요일 0시(한국 시간)에 새로 시작해요. 다음 주 목적지는 후보 3개국 중 투표로 정해요.</li>
-    <li>타이머로 잰 공부 시간으로만 겨뤄요. 직접 입력한 기록은 빠지고, 마일리지 2배와도 상관없어요.</li>
+    <li>타이머로 잰 공부 시간으로만 겨뤄요. 직접 입력한 기록은 빠지고, 투어디 플러스(마일리지 1.5배)와도 상관없어요.</li>
     <li>참가한 뒤의 공부만, 하루 최대 8시간(주 최대 56시간)까지 반영돼요. 끝난 공부는 24시간 안에 인터넷이 연결돼야 올라가요.</li>
     <li>등급(${TIERS.join('·')})이 같은 사람끼리 30명씩 리그로 묶여요. 리그가 5명 이상일 때 승급·강등이 있어요.</li>
     <li>승급(위로 갈수록 어려워요): ${TIERS.slice(0,4).map((t,i)=>`${t} 상위 ${PROMO_PCT[i]}%·${PROMO_H[i]}시간`).join(' · ')}</li>
@@ -224,7 +224,7 @@
     const head=`<div class="wk-head">${flag(c)}<div><small>이번 주 목적지 · ${esc(left(board.ends_at))}</small><b>${esc(cname(c))}</b><span class="wk-going">${coop.participants}명이 함께 ${esc(ro(cname(c)))} 떠났어요</span></div><span class="wk-tier wk-t${board.tier|0}">${esc(tname(board.tier))}</span></div>`;
     const coopPct=Math.min(100,Math.round(coop.minutes/Math.max(1,coop.goal)*100));
     const coopBox=`<div class="wk-coop"><span class="plabel">모두 함께 · 협동 목표</span><div class="wk-bar"><i style="width:${coopPct}%"></i></div>
-      <small>${hm(coop.minutes)} / ${hm(coop.goal)} (${coopPct}%) · 달성하면 1시간 이상 공부한 모두에게 스탬프</small></div>`;
+      <small>${hm(coop.minutes)} / ${hm(coop.goal)} (${coopPct}%) · 달성하면 이번 주 ${hm(COOP_MIN)} 이상 공부한 모두에게 스탬프</small></div>`;
     if(!board.joined){
       return `<div class="panel-head"><h2>주간 챌린지</h2></div>${head}
         <p class="note">이번 주 내 등급은 <b>${esc(ieyo(tname(board.tier)))}</b>. 참가하면 같은 등급의 최대 30명과 한 리그가 돼요.</p>
@@ -255,11 +255,51 @@
     box.hidden=!pass.length;if(!pass.length)return;
     box.innerHTML=`<div class="panel-head"><h2>챌린지 특별 여권</h2><span class="note">주간 챌린지 리그 1등 ${pass.length}회</span></div><div class="wk-passes">${pass.map(passportCover).join('')}</div>`;
   }
+
+  /* --- 처음 들어왔을 때 보여 주는 안내 카드 (설정 → 기타 → 주간 챌린지에서 다시 보기) --- */
+  if(typeof TOUR_ART==='object'){
+    TOUR_ART.wkGlobe='<svg viewBox="0 0 120 120" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="54" cy="64" r="34"/><path d="M20 64h68M54 30c12 10 12 58 0 68M54 30c-12 10-12 58 0 68"/><path d="M84 18l18 6-14 12" stroke-width="2.6"/><path d="M88 22c4 8 4 16 0 22" stroke-dasharray="3 6"/></svg>';
+    TOUR_ART.wkLeague='<svg viewBox="0 0 120 120" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M42 24h36v18a18 18 0 0 1-36 0z"/><path d="M42 30H28c0 12 6 18 16 18M78 30h14c0 12-6 18-16 18M60 60v14M46 90h28M50 74h20v16H50z"/><path d="m18 96 8-8 8 8M86 88l8 8 8-8" stroke-width="2.6"/></svg>';
+    TOUR_ART.wkPost='<svg viewBox="0 0 120 120" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><rect x="14" y="30" width="92" height="62" rx="6"/><path d="M62 38v46M70 50h26M70 60h26M70 70h18"/><rect x="80" y="36" width="18" height="10" rx="2" stroke-width="2.4"/><path d="M22 80l12-16 8 10 8-6 6 12z"/><circle cx="34" cy="48" r="5"/></svg>';
+    TOUR_ART.wkTeam='<svg viewBox="0 0 120 120" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="40" cy="42" r="10"/><circle cx="80" cy="42" r="10"/><circle cx="60" cy="34" r="10"/><path d="M22 76c2-12 10-18 18-18M98 76c-2-12-10-18-18-18M40 80c2-14 10-22 20-22s18 8 20 22"/><path d="M20 96h80" stroke-dasharray="6 6"/></svg>';
+    TOUR_ART.wkGift='<svg viewBox="0 0 120 120" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><rect x="26" y="20" width="52" height="72" rx="6"/><circle cx="52" cy="48" r="12"/><path d="M40 72h24M44 80h16"/><circle cx="86" cy="80" r="18"/><path d="m80 80 5 5 9-10"/></svg>';
+  }
+  const WK_TOUR=[
+    {k:'주간 챌린지',art:'wkGlobe',h:'매주 한 나라로 다 같이 떠나요',
+     p:'일주일 동안 투어디 사용자 모두가 같은 나라를 목적지로 공부해요. 매주 월요일 0시(한국 시간)에 새로 시작해요.',
+     list:['<b>타이머로 잰 공부 시간</b>으로만 겨뤄요','직접 입력한 기록은 빠지고, 플러스 구독과도 상관없이 공평해요','하루 최대 8시간까지 반영돼요','참가하려면 <b>로그인</b>이 필요해요']},
+    {k:'리그',art:'wkLeague',h:'같은 등급끼리 30명 리그',
+     p:'브론즈부터 다이아까지 다섯 등급이 있어요. 같은 등급인 사람끼리 최대 30명씩 한 리그가 돼요.',
+     list:['<b>▲ 승급</b> · 순위가 높고 정해진 시간 이상 공부하면 다음 주 한 등급 위로','<b>▼ 강등</b> · 순위가 낮고 유지 기준 시간을 못 채우면 한 등급 아래로','리그가 5명 이상일 때만 승급·강등이 있어요']},
+    {k:'랜드마크',art:'wkPost',h:'공부할수록 랜드마크가 열려요',
+     p:'그 나라의 랜드마크 다섯 곳이 이번 주 공부 시간에 따라 하나씩 열리고, 열릴 때마다 엽서가 와요.',
+     list:[`<b>${LANDMARK_H.join('·')}시간</b>에 하나씩 열려요`,`<b>10시간</b>이면 완주 · 완주 스탬프(+${REWARD.stamp})와 그 나라 <b>무료 항공권</b>`]},
+    {k:'협동과 투표',art:'wkTeam',h:'모두의 공부 시간을 합쳐요',
+     p:'참가한 모든 사람의 공부 시간을 합쳐서 협동 목표를 채워요. 다음 주 목적지도 함께 정해요.',
+     list:[`협동 목표를 달성하면 ${hm(COOP_MIN)} 이상 공부한 모두에게 스탬프(+${REWARD.coop})`,'후보 3개국 중 <b>투표</b>로 다음 주 나라를 골라요 (일요일 자정까지 바꿀 수 있어요)']},
+    {k:'결과와 보상',art:'wkGift',h:'월요일에 결과 카드가 도착해요',
+     p:'한 주가 끝나면 다음 월요일에 순위와 등급 변화를 보여 주고 보상을 넣어 드려요.',
+     list:[`완주하고 리그 상위 10% · <b>금 뱃지</b>(+${REWARD.gold})`,`완주하고 리그 1등 · <b>특별 여권</b>(+${REWARD.passport})`,'받은 마일리지는 바로 여행에 쓸 수 있어요'],
+     note:'다시 보고 싶으면 <b>설정 → 기타 → 주간 챌린지</b>에서 볼 수 있어요.'}
+  ];
+  function tutorial(){
+    if(typeof openTour!=='function')return;
+    const d=$('tourDialog');if(d&&d.open)return;
+    openTour(WK_TOUR,{last:me()?'챌린지 보러 가기':'확인',close(){if(!S.wkTour){S.wkTour=1;save()}},
+      finish(){if(typeof setTab==='function'&&tr().on&&!$('tabTravel').hidden){const T=tr();T.world='week';save();setTab('travel')}}});
+  }
+  // 주간 탭을 처음 열면 한 번만 (첫 실행 튜토리얼·다른 창이 떠 있으면 다음에)
+  function maybeTutorial(){
+    if(S.wkTour||!visible()||document.querySelector('dialog[open]')||document.body.classList.contains('tour-active'))return;
+    setTimeout(()=>{if(!S.wkTour&&visible()&&!document.querySelector('dialog[open]'))tutorial()},250);
+  }
   document.addEventListener('click',e=>{
     const v=e.target.closest('[data-vote]');if(v){vote(v.dataset.vote);return}
     if(e.target.closest('#wkJoin'))join();
     else if(e.target.closest('#wkRefresh')){report();loadedAt=0;load()}
     else if(e.target.closest('#wkLogin')){setTab('set');openSet('account')}
+    else if(e.target.closest('#wkTourReplay'))tutorial();
+    else if(e.target.closest('#wkGo')){if(!tr().on||$('tabTravel').hidden){toast('설정 → 여행에서 여행 탭을 켜면 주간 챌린지를 쓸 수 있어요');return}tr().world='week';save();setTab('travel');window.scrollTo({top:0})}
   });
   document.addEventListener('toggle',e=>{if(e.target&&e.target.id==='wkRules')rulesOpen=e.target.open},true);
   document.addEventListener('input',e=>{if(e.target&&e.target.id==='wkNick')nickDraft=e.target.value});
@@ -267,5 +307,5 @@
   document.addEventListener('tourdy:signed-in',sync);
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)sync()});
   {const base=save;save=function(){const r=base.apply(this,arguments);if(me())scheduleReport();return r}}
-  window.TourdyChallenge={render:()=>{render();if(me()&&Date.now()-loadedAt>60e3)load()},renderAch,_rewardsFor:rewardsFor};
+  window.TourdyChallenge={render:()=>{render();maybeTutorial();if(me()&&Date.now()-loadedAt>60e3)load()},renderAch,tutorial,_rewardsFor:rewardsFor};
 })();
