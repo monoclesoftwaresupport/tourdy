@@ -1968,26 +1968,8 @@ button.spm-n{cursor:pointer}button.spm-n:hover{opacity:1}
 .ps-over{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;padding:16px;background:color-mix(in srgb,var(--surface) 72%,transparent)}
 .ps-over svg{width:26px;height:26px;color:#a07c12}.ps-over b{font-size:16px;font-weight:800}.ps-over span{font-size:13px;color:var(--muted);max-width:28ch}.ps-over .primary{margin-top:6px}
 /* 티켓 스킨: 한눈에 다르게 보이도록 바탕·글꼴·도장까지 바꾼다 */
-.skin-holo .tx,.skin-vintage .tx{position:relative}
-.skin-holo .tx-stub{position:relative}.skin-holo .tx-stub>*,.skin-vintage .tx-stub>*{position:relative;z-index:1}
-/* 홀로그램: 원래 색은 그대로, 왼쪽 홀로그램 보안 띠 + 지나가는 반사광 + 회전하는 홀로그램 인증 스티커 */
-.skin-holo .tx-main::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;border-radius:inherit;
-  background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.85) 50%,transparent 60%) -150% 0/220% 100% no-repeat,
-    repeating-linear-gradient(0deg,rgba(255,255,255,.5) 0 1px,transparent 1px 3px) 0 0/14px 100% no-repeat,
-    linear-gradient(180deg,#ff9ad5,#ffd36e 20%,#9cf6c4 40%,#7fd3ff 60%,#b59cff 80%,#ff9ad5) 0 0/14px 100% no-repeat,
-    linear-gradient(120deg,rgba(255,154,213,.16),rgba(127,211,255,.18) 50%,rgba(181,156,255,.16));
-  animation:holoSweep 4.5s ease-in-out infinite}
-.skin-holo .tx-stub::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;border-radius:inherit;
-  background:linear-gradient(105deg,transparent 42%,rgba(255,255,255,.55) 50%,transparent 58%) -150% 0/220% 100% no-repeat,linear-gradient(120deg,rgba(255,154,213,.14),rgba(127,211,255,.16) 50%,rgba(181,156,255,.14));
-  animation:holoSweepS 4.5s ease-in-out infinite}
-@keyframes holoSweep{0%,35%{background-position:-150% 0,0 0,0 0,0 0}85%,100%{background-position:260% 0,0 0,0 0,0 0}}
-@keyframes holoSweepS{0%,35%{background-position:-150% 0,0 0}85%,100%{background-position:260% 0,0 0}}
-.skin-holo .tx{filter:drop-shadow(0 0 7px rgba(160,140,255,.35)) drop-shadow(0 2px 8px rgba(0,0,0,.18))}
-.skin-holo .tx::after{content:"✦";position:absolute;right:14px;top:-14px;z-index:3;width:34px;height:34px;display:grid;place-items:center;border-radius:50%;
-  font:900 14px/1 sans-serif;color:rgba(70,40,140,.85);
-  background:radial-gradient(circle,rgba(255,255,255,.92) 0 30%,transparent 31%),conic-gradient(#ff9ad5,#ffd36e,#9cf6c4,#7fd3ff,#b59cff,#ff9ad5);
-  box-shadow:0 0 0 2px rgba(255,255,255,.9),0 3px 8px rgba(0,0,0,.28);animation:holoSpin 7s linear infinite}
-@keyframes holoSpin{to{transform:rotate(360deg)}}
+.skin-vintage .tx{position:relative}
+.skin-vintage .tx-stub>*{position:relative;z-index:1}
 /* 빈티지: 누렇게 바랜 종이 · 명조체 · 얼룩 · 빨간 검표 도장 */
 .skin-vintage .tx{filter:sepia(.75) saturate(.9) contrast(1.05)}
 .skin-vintage .tx-main::before,.skin-vintage .tx-stub::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;border-radius:inherit;
@@ -1999,11 +1981,81 @@ button.spm-n{cursor:pointer}button.spm-n:hover{opacity:1}
 .skin-vintage .tx :is(.bx-route b,.tk-route b){font-weight:900}
 .skin-vintage .tx::after{content:"검표필";position:absolute;right:22%;top:38%;z-index:3;width:62px;height:62px;display:grid;place-items:center;border-radius:50%;
   font:900 14px/1 "Noto Serif KR",serif;color:rgba(190,30,30,.85);border:3px double rgba(190,30,30,.75);transform:rotate(-16deg);pointer-events:none;mix-blend-mode:multiply}
-@media (prefers-reduced-motion:reduce){.skin-holo .tx-main::before,.skin-holo .tx-stub::before,.skin-holo .tx::after{animation:none}}
 /* 설정의 스킨 미리보기 */
 .skin-prev{display:flex;flex-direction:column;gap:10px;margin:4px 0 6px}
 .skin-prev .tx{font-size:.92em}
 .skin-prev-note{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
 .skin-vintage .tk-stub{color:#241b12!important;text-shadow:none!important}.skin-vintage .tx::after{opacity:.75}
-#tkSkin{grid-template-columns:repeat(3,minmax(0,1fr))!important} /* 스킨은 3칸이라 균등하게 */
 .spl-n{margin-bottom:10px} /* 카운트다운 숫자·점화 글자와 발사대 사이 여백 */
+
+/* ===== 럭셔리 티켓 스킨 10종 (시안 01~10) =====
+   html에 .skin-lux .skin-이름 을 붙이면 국내 승차권(.tk)·세계 탑승권(.bx) 모두 아래 변수로 칠한다.
+   --k-bg 바탕 · --k-pat 무늬 · --k-top 윗선 · --k-fg 글자 · --k-mut 보조 글자 · --k-acc 포인트 · --k-vfg 포인트 위 글자
+   --k-line 점선 · --k-stub 오른쪽 조각 · --k-sfg 조각 글자 · --k-badge '도착 완료' 테두리 · --k-glow 테두리 빛 · --k-tag 머리글 뱃지 */
+.skin-blackgold{--k-bg:linear-gradient(135deg,#141416,#0b0b0d);--k-pat:repeating-linear-gradient(-45deg,rgba(212,175,55,.045) 0 6px,transparent 6px 12px);--k-top:linear-gradient(90deg,#aa7c11,#f6e27a,#d4af37);--k-fg:#f5f1e6;--k-mut:#9a927e;--k-acc:#d4af37;--k-vfg:#1a1400;--k-line:rgba(212,175,55,.35);--k-stub:#121214;--k-sfg:#f6e27a;--k-badge:rgba(212,175,55,.7);--k-glow:rgba(212,175,55,.35);--k-tag:"PRESTIGE"}
+.skin-sapphire{--k-bg:linear-gradient(135deg,#0b1736,#0a1128 60%,#0e2156);--k-pat:radial-gradient(circle at 80% 20%,rgba(79,139,255,.18),transparent 45%);--k-top:linear-gradient(90deg,#1d4ed8,#60a5fa);--k-fg:#eef3ff;--k-mut:#8fa2cf;--k-acc:#5b93ff;--k-vfg:#fff;--k-line:rgba(143,162,207,.35);--k-stub:linear-gradient(160deg,#1e40af,#2563eb 55%,#1d4ed8);--k-sfg:#fff;--k-badge:rgba(255,255,255,.6);--k-glow:rgba(79,139,255,.35);--k-tag:"ROYAL"}
+.skin-ivory{--k-bg:#f7f3ea;--k-pat:linear-gradient(transparent,transparent);--k-top:linear-gradient(90deg,#8a5a3c,#b07a52);--k-fg:#1f1a14;--k-mut:#8a7f70;--k-acc:#8a5a3c;--k-vfg:#fff;--k-line:rgba(138,90,60,.35);--k-stub:#2b221c;--k-sfg:#f7f3ea;--k-badge:rgba(247,243,234,.55);--k-glow:rgba(0,0,0,0);--k-tag:""}
+.skin-aurora{--k-bg:radial-gradient(ellipse at 25% 30%,rgba(34,211,238,.18),transparent 55%),radial-gradient(ellipse at 80% 90%,rgba(59,130,246,.2),transparent 55%),#0a1626;--k-pat:linear-gradient(transparent,transparent);--k-top:linear-gradient(90deg,transparent,transparent);--k-fg:#e8f6ff;--k-mut:#7fa3bd;--k-acc:#22d3ee;--k-vfg:#032a33;--k-line:rgba(127,163,189,.3);--k-stub:radial-gradient(ellipse at 50% 0,rgba(34,211,238,.22),transparent 60%),#0d2238;--k-sfg:#e0faff;--k-badge:rgba(34,211,238,.6);--k-glow:rgba(34,211,238,.3);--k-tag:""}
+.skin-swiss{--k-bg:#f2f1ec;--k-pat:linear-gradient(transparent,transparent);--k-top:linear-gradient(90deg,#111,#111);--k-fg:#111;--k-mut:#6b6b6b;--k-acc:#2563eb;--k-vfg:#fff;--k-line:rgba(0,0,0,.22);--k-stub:#141414;--k-sfg:#fff;--k-badge:#2563eb;--k-glow:rgba(0,0,0,0);--k-tag:""}
+.skin-platinum{--k-bg:linear-gradient(135deg,#e6e9ef,#f8fafc 30%,#d5dbe3 50%,#f1f5f9 75%,#cbd5e1);--k-pat:linear-gradient(transparent,transparent);--k-top:linear-gradient(90deg,#1d4ed8,#3b82f6);--k-fg:#0f172a;--k-mut:#64748b;--k-acc:#1d4ed8;--k-vfg:#fff;--k-line:rgba(15,23,42,.22);--k-stub:linear-gradient(160deg,#1e293b,#0f172a);--k-sfg:#e2e8f0;--k-badge:rgba(226,232,240,.5);--k-glow:rgba(148,163,184,.4);--k-tag:"PLATINUM"}
+.skin-emerald{--k-bg:linear-gradient(135deg,#0e2e22,#0a2219);--k-pat:radial-gradient(rgba(212,175,55,.12) 1px,transparent 1px) 0 0/12px 12px;--k-top:linear-gradient(90deg,#aa7c11,#e6c76b,#d4af37);--k-fg:#f3efe0;--k-mut:#a7b8a8;--k-acc:#d9b25c;--k-vfg:#1a1400;--k-line:rgba(217,178,92,.35);--k-stub:#0c241b;--k-sfg:#f3efe0;--k-badge:rgba(217,178,92,.6);--k-glow:rgba(217,178,92,.25);--k-tag:""}
+.skin-holo{--k-bg:linear-gradient(135deg,#15171f,#0e1016);--k-pat:linear-gradient(100deg,transparent 30%,rgba(255,255,255,.07) 45%,transparent 60%);--k-top:linear-gradient(90deg,#c084fc,#60a5fa,#34d399,#f472b6);--k-fg:#fff;--k-mut:#9aa0b5;--k-acc:#c084fc;--k-vfg:#111827;--k-line:rgba(192,132,252,.35);--k-stub:linear-gradient(160deg,#c084fc,#60a5fa 35%,#34d399 65%,#f472b6);--k-sfg:#111827;--k-badge:rgba(17,24,39,.6);--k-glow:rgba(192,132,252,.4);--k-tag:""}
+.skin-ceramic{--k-bg:#fff;--k-pat:linear-gradient(transparent,transparent);--k-top:linear-gradient(90deg,#4f46e5,#6366f1);--k-fg:#111827;--k-mut:#6b7280;--k-acc:#4f46e5;--k-vfg:#fff;--k-line:rgba(79,70,229,.25);--k-stub:#4f46e5;--k-sfg:#fff;--k-badge:rgba(255,255,255,.55);--k-glow:rgba(79,70,229,.2);--k-tag:""}
+.skin-burgundy{--k-bg:linear-gradient(135deg,#2c1219,#1e0b10);--k-pat:repeating-linear-gradient(-45deg,rgba(244,180,168,.05) 0 7px,transparent 7px 14px);--k-top:linear-gradient(90deg,#b76e79,#f4b4a8,#e8a598);--k-fg:#fbeee9;--k-mut:#c9a3a0;--k-acc:#f4b4a8;--k-vfg:#3a1520;--k-line:rgba(244,180,168,.35);--k-stub:#3a1520;--k-sfg:#fbeee9;--k-badge:rgba(244,180,168,.6);--k-glow:rgba(244,180,168,.25);--k-tag:""}
+/* 공통: 국내 승차권 */
+.skin-lux .tk{--tc:var(--k-acc);--th:var(--k-acc);--ts:var(--k-sfg);--tp:transparent;color:var(--k-fg);filter:drop-shadow(0 0 1px var(--k-glow)) drop-shadow(0 4px 14px rgba(0,0,0,.28))}
+.skin-lux .tk-main{background:var(--k-top) top/100% 4px no-repeat,var(--k-pat),var(--k-bg)!important;border-top:0;padding-top:16px}
+.skin-lux .tk-hd{color:var(--k-mut)}.skin-lux .tk-hd span:first-child{color:var(--k-acc)}
+:is(.skin-blackgold,.skin-sapphire,.skin-platinum) .tk-hd span:first-child::after{content:var(--k-tag);font:800 9px/1 "IBM Plex Mono",monospace;letter-spacing:.14em;color:var(--k-acc);border:1px solid var(--k-acc);border-radius:4px;padding:3px 5px;margin-left:4px}
+.skin-lux .tk-route small{color:var(--k-acc)}
+.skin-lux .tk-route b{color:var(--k-fg)}
+.skin-lux :is(.tk-route em,.tk-mid,.tk-info small){color:var(--k-mut)!important}
+.skin-lux .tk-info{border-top:1px dashed var(--k-line)}
+.skin-lux .tk-info b{color:var(--k-fg)}.skin-lux .tk-info>div:nth-child(3) b{color:var(--k-acc)}
+.skin-lux .tk-path{height:2px;background:linear-gradient(90deg,var(--k-line),var(--k-line))}
+.skin-lux .tk-path i{background:var(--k-acc)}
+.skin-lux .tk-vh{background:var(--k-acc);color:var(--k-vfg);box-shadow:0 0 0 3px color-mix(in srgb,var(--k-acc) 25%,transparent)}
+.skin-lux .tk .tx-bg{color:var(--k-acc);opacity:.07}
+.skin-lux .tk-stub{background:var(--k-stub)!important;color:var(--k-sfg)!important;border-left:1.5px dashed var(--k-line);text-shadow:none!important}
+.skin-lux .tk-stub small{align-self:center;opacity:1;border:1px solid var(--k-badge);border-radius:999px;padding:2px 9px;margin-bottom:4px}
+.skin-lux .tk-stub span{opacity:.85}
+.skin-lux .tk-bars{background:#fff;border-radius:6px}
+/* 공통: 세계 탑승권 */
+.skin-lux .bx{color:var(--k-fg);filter:drop-shadow(0 0 1px var(--k-glow)) drop-shadow(0 4px 14px rgba(0,0,0,.28))}
+.skin-lux .bx-main{background:var(--k-top) top/100% 4px no-repeat,var(--k-pat),var(--k-bg)!important}
+.skin-lux .bx-hd{background:transparent!important;color:var(--k-mut)!important;padding-top:14px}
+.skin-lux .bx-bp{color:var(--k-acc)}
+.skin-lux :is(.bx-route small,.bx-route>div>span,.bx-info small){color:var(--k-mut)!important}
+.skin-lux :is(.bx-route b,.bx-route em,.bx-info b){color:var(--k-fg)!important;text-shadow:none!important}
+.skin-lux .bx-info{background:color-mix(in srgb,var(--k-fg) 6%,transparent)!important;border:1px solid var(--k-line)}
+.skin-lux .bx-info>div:nth-child(2) b{color:var(--k-acc)!important}
+.skin-lux .bx-line{background:linear-gradient(90deg,var(--k-line),var(--k-line))!important}.skin-lux .bx-line i{background:var(--k-acc)!important}
+.skin-lux .bx-pl{color:var(--k-acc)!important;filter:none}
+.skin-lux .bx-loc{color:var(--k-acc)!important}
+.skin-lux .bx .tx-bg{color:var(--k-acc);opacity:.07}
+.skin-lux .bx-stub{background:var(--k-stub)!important;color:var(--k-sfg)!important;border-left:1.5px dashed var(--k-line)!important}
+.skin-lux .bx-sh{background:var(--k-acc)!important;color:var(--k-vfg)!important}
+.skin-lux :is(.bx-kv small,.bx-big small){color:color-mix(in srgb,var(--k-sfg) 65%,transparent)!important}
+.skin-lux :is(.bx-kv b,.bx-sr b,.bx-sr svg){color:var(--k-sfg)!important}
+.skin-lux .bx-big b{color:var(--k-sfg)!important}
+.skin-lux .bx-code{filter:none;border-radius:4px;background-color:#fff!important}
+/* 개별 개성 */
+.skin-swiss .tk-info>div+div,.skin-swiss .bx-info>div:not(:nth-child(4n+1)){border-left:1px solid rgba(0,0,0,.14);padding-left:8px}
+.skin-swiss .tk-main{background:linear-gradient(#fff,#fff) top/100% 34px no-repeat,var(--k-top) 0 34px/100% 1px no-repeat,var(--k-bg)!important}
+.skin-ceramic .tk-route,.skin-ceramic .bx-route{background:#f5f6fb;border:1px solid #e5e7f2;border-radius:12px;padding:8px 10px}
+.skin-ivory .tk-route b,.skin-ivory .bx-route b{font-family:"Noto Serif KR",serif!important;font-weight:900}
+.skin-holo .tk-main::before,.skin-holo .bx-main::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;background:linear-gradient(100deg,transparent 35%,rgba(255,255,255,.12) 48%,transparent 60%) -150% 0/220% 100% no-repeat;animation:luxSheen 5s ease-in-out infinite}
+.skin-holo .bx-main{position:relative}.skin-holo .bx-main>*:not(.tx-bg){position:relative;z-index:1}
+@keyframes luxSheen{0%,40%{background-position:-150% 0}90%,100%{background-position:260% 0}}
+.skin-holo .tk-path i,.skin-holo .bx-line i{background:linear-gradient(90deg,#c084fc,#60a5fa,#34d399,#f472b6)!important}
+.skin-holo .tk-vh{background:conic-gradient(#c084fc,#60a5fa,#34d399,#f472b6,#c084fc)}
+@media (prefers-reduced-motion:reduce){.skin-holo .tk-main::before,.skin-holo .bx-main::before{animation:none}}
+/* 스킨 고르기 (견본 칩) */
+#tkSkin.skin-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(98px,1fr))!important;gap:8px;background:none;padding:0;width:100%}
+#tkSkin.skin-grid button{display:flex;flex-direction:column;align-items:stretch;gap:6px;padding:6px 6px 8px;height:auto;border-radius:12px;background:var(--hover);color:var(--ink);font-size:12px;font-weight:700;box-shadow:inset 0 0 0 1.5px transparent;position:relative}
+#tkSkin.skin-grid button[aria-pressed="true"]{box-shadow:inset 0 0 0 2px var(--accent);background:var(--hover)}
+#tkSkin.skin-grid button.locked{opacity:1}#tkSkin.skin-grid button.locked>svg{position:absolute;right:9px;top:9px;width:12px;height:12px;color:#fff;filter:drop-shadow(0 1px 1px rgba(0,0,0,.6));z-index:1}
+.sw{display:grid;width:100%;grid-template-columns:1fr 30%;height:38px;border-radius:7px;overflow:hidden;box-shadow:inset 0 0 0 1px rgba(127,127,127,.25)}
+.sw i{display:block}.sw i:first-child{background:var(--k-top) top/100% 3px no-repeat,var(--k-pat),var(--k-bg)}.sw i:last-child{background:var(--k-stub);border-left:1px dashed var(--k-line)}
+.sw.sw-base i:first-child{background:#f4f8ff;border-top:4px solid #1d6fd8}.sw.sw-base i:last-child{background:#1d6fd8}
+.sw.sw-vintage i:first-child{background:#efe0b9}.sw.sw-vintage i:last-child{background:#9b7b55}

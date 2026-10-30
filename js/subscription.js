@@ -50,19 +50,27 @@
   let plan='y';
 
   /* ===== 꾸미기 ===== */
-  function applySkin(){const o=TOPT(),sk=subOn()?(o.skin||'base'):'base';document.documentElement.classList.toggle('skin-holo',sk==='holo');document.documentElement.classList.toggle('skin-vintage',sk==='vintage')}
+  // [키, 이름, 설명] — 럭셔리 10종은 css의 .skin-lux .skin-키 변수로 칠한다
+  const SKINS=[['base','기본','깔끔한 기본 승차권'],['vintage','빈티지','바랜 종이, 명조체 글씨, 빨간 검표 도장'],
+    ['blackgold','블랙 골드','검은 바탕에 금빛 줄무늬와 PRESTIGE 뱃지'],['sapphire','로열 사파이어','깊은 남색과 빛나는 사파이어 블루'],['ivory','아이보리','상아색 종이와 초콜릿 브라운, 조용한 고급스러움'],
+    ['aurora','글래스 오로라','밤하늘 오로라처럼 번지는 청록빛'],['swiss','스위스 그리드','칸이 반듯한 스위스 타이포그래피'],['platinum','플래티넘','브러시드 메탈 바탕과 PLATINUM 뱃지'],
+    ['emerald','브리티시 에메랄드','짙은 초록 바탕에 금빛 점 무늬'],['holo','홀로그래픽 포일','검은 바탕에 무지갯빛 포일 조각과 반사광'],['ceramic','모던 세라믹','하얀 세라믹과 인디고 포인트'],['burgundy','버건디 로즈골드','와인빛 바탕에 로즈골드 줄무늬']];
+  const SKIN_NAME=Object.fromEntries(SKINS.map(x=>[x[0],x[1]])),SKIN_DESC=Object.fromEntries(SKINS.map(x=>[x[0],x[2]]));
+  const LUX=new Set(SKINS.slice(2).map(x=>x[0]));
+  const skinCls=sk=>sk==='vintage'?['skin-vintage']:LUX.has(sk)?['skin-lux','skin-'+sk]:[];
+  const ALLCLS=['skin-vintage','skin-lux',...[...LUX].map(k=>'skin-'+k)];
+  function applySkin(){const o=TOPT(),sk=subOn()&&SKIN_NAME[o.skin]?o.skin:'base',r=document.documentElement;r.classList.remove(...ALLCLS);r.classList.add(...skinCls(sk))}
   function markTravelSet(){
     const on=subOn(),o=TOPT();
     $('mapTheme').querySelectorAll('[data-mt]').forEach(b=>{const lock=!on&&b.dataset.mt!=='base';b.classList.toggle('locked',lock);if(lock&&!b.querySelector('svg'))b.insertAdjacentHTML('afterbegin',LOCK);if(!lock)b.querySelector('svg')?.remove()});
-    const cur=on?(o.skin||'base'):'base',shown=prevSkin||cur;
-    $('tkSkin').querySelectorAll('[data-skin]').forEach(b=>{const lock=!on&&b.dataset.skin!=='base';b.classList.toggle('locked',lock);if(lock&&!b.querySelector('svg'))b.insertAdjacentHTML('afterbegin',LOCK);if(!lock)b.querySelector('svg')?.remove();b.setAttribute('aria-pressed',shown===b.dataset.skin)});
+    const cur=on&&SKIN_NAME[o.skin]?o.skin:'base',shown=prevSkin||cur;
+    $('tkSkin').innerHTML=SKINS.map(([k,n])=>{const lock=!on&&k!=='base';return `<button type="button" data-skin="${k}" aria-pressed="${shown===k}" class="${lock?'locked':''}" aria-label="${n}${lock?' (플러스)':''}">${lock?LOCK:''}<span class="sw ${LUX.has(k)?'skin-'+k:'sw-'+k}"><i></i><i></i></span>${n}</button>`}).join('');
     renderSkinPreview(shown,!on&&shown!=='base');
   }
   // 고른 스킨을 바로 보여 주는 미리보기 (무료는 잠긴 스킨도 미리보기만 할 수 있음)
   let prevSkin=null;
-  const SKIN_NAME={base:'기본',holo:'홀로그램',vintage:'빈티지'},SKIN_DESC={base:'깔끔한 기본 승차권',holo:'홀로그램 보안 띠, 지나가는 반사광, 회전하는 인증 스티커',vintage:'바랜 종이, 명조체 글씨, 빨간 검표 도장'};
   function renderSkinPreview(sk,locked){const el=$('skinPreview');if(!el)return;
-    el.className='skin-prev'+(sk!=='base'?' skin-'+sk:'');
+    el.className=['skin-prev',...skinCls(sk)].join(' ');
     let tk='';try{const K=kr(tr()),a=K.home&&KRM[K.home]?K.home:'seoul',b=Object.keys(KRM).find(k=>k!==a&&krCost(a,k)<260)||'busan';tk=krTicket(a,b,{done:1,d:dk(today0())})}catch(e){}
     el.innerHTML=tk+`<div class="skin-prev-note"><span><b>${SKIN_NAME[sk]}</b> · ${SKIN_DESC[sk]}</span>${locked?'<button class="primary" data-subgo>플러스로 쓰기</button>':''}</div>`}
   const goSub=msg=>{if(msg)toast(msg);setTab('set');setPage='sub';renderSet();window.scrollTo({top:0,behavior:'smooth'})};
