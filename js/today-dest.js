@@ -28,7 +28,7 @@
     const T=tr();
     if(!T.on){box.hidden=true;return}
     const avail=Math.max(0,totalMiles()-T.used),P=plan(),w=world(T),K=kr(T);
-    const k=[w,Math.floor(avail),Math.floor(P.miles),K.at,K.to,T.at,T.to,K.done.length,T.stamps.length,P.goal,subOn(),window.subBonusChip?subBonusChip():''].join('|');
+    const k=[w,Math.floor(avail),Math.floor(P.miles),K.at,K.to,T.at,T.to,K.done.length,T.stamps.length,P.goal,subOn()].join('|');
     if(k===key&&!box.hidden)return;key=k;
     const until=P.goal?'오늘 목표를 채우면':'오늘 2시간 더 공부하면';
     let h='';
@@ -47,7 +47,7 @@
       if(!rows.length){box.hidden=true;return}
       const {now,later}=pick(rows,avail,avail+P.miles);
       const row=(x,tag,sub)=>`<button class="td-row" data-tdgo="${w}:${x[0]}"><b>${esc(x[1])}</b><span>${tag}</span><small>${esc(x[2])} · ${sub}</small></button>`;
-      h=`<div class="td-h"><span>오늘의 목적지</span><small>${w==='korea'?'국내':'세계'} · 보유 ${Math.floor(avail).toLocaleString()} 마일리지</small></div>${window.subBonusChip?subBonusChip():''}<div class="td-list">`
+      h=`<div class="td-h"><span>오늘의 목적지</span><small>${w==='korea'?'국내':'세계'} · 보유 ${Math.floor(avail).toLocaleString()} 마일리지</small></div><div class="td-list">`
         +(now?row(now,'지금 바로 출발',`${now[3].toLocaleString()} 마일리지`):'')
         +(later?row(later,later[3]<=avail+P.miles?until:`공부 ${studyFor(later[3]-avail)} 더`,`${later[3].toLocaleString()} 마일리지`):'')
         +'</div>';

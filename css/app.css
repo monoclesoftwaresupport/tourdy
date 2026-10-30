@@ -1937,8 +1937,6 @@ button.spm-n{cursor:pointer}button.spm-n:hover{opacity:1}
 .plus-acts{display:flex;flex-direction:column;gap:10px;align-items:flex-start}
 .plus-fair{font-size:12px}
 .sub-page #subBody{display:flex;flex-direction:column;gap:16px}
-.plus-chip{display:inline-flex;align-items:center;gap:6px;align-self:flex-start;font-size:13px;font-weight:800;color:#3b2c00;background:linear-gradient(90deg,#d4af37,#f6e27a,#d4af37);border-radius:999px;padding:7px 14px;border:0}
-.plus-chip svg{width:14px;height:14px}
 .plus-badge{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:800;color:#8a6a10;background:color-mix(in srgb,#d4af37 18%,transparent);border-radius:999px;padding:3px 10px}.plus-badge svg{width:12px;height:12px}
 .plus-tag{font-size:11px;font-weight:700;color:#a07c12;margin-left:4px}
 .plus-mile{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 14px;border-radius:14px;background:color-mix(in srgb,#d4af37 14%,var(--hover));color:var(--ink);font:inherit;text-align:left;border:0;width:100%}
@@ -1969,11 +1967,34 @@ button.spm-n{cursor:pointer}button.spm-n:hover{opacity:1}
 .ps-blur{filter:blur(5px);opacity:.6;pointer-events:none;user-select:none;display:flex;flex-direction:column;gap:14px}
 .ps-over{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;padding:16px;background:color-mix(in srgb,var(--surface) 72%,transparent)}
 .ps-over svg{width:26px;height:26px;color:#a07c12}.ps-over b{font-size:16px;font-weight:800}.ps-over span{font-size:13px;color:var(--muted);max-width:28ch}.ps-over .primary{margin-top:6px}
-/* 티켓 스킨 */
+/* 티켓 스킨: 한눈에 다르게 보이도록 바탕·글꼴·도장까지 바꾼다 */
+.skin-holo .tx,.skin-vintage .tx{position:relative}
+.skin-holo .tx-stub{position:relative}.skin-holo .tx-stub>*,.skin-vintage .tx-stub>*{position:relative;z-index:1}
+/* 홀로그램: 무지갯빛 포일 바탕 + 지나가는 반사광 + HOLO 인증 띠 */
 .skin-holo .tx-main::before,.skin-holo .tx-stub::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;border-radius:inherit;
-  background:linear-gradient(115deg,transparent 18%,rgba(255,120,200,.26) 32%,rgba(120,220,255,.28) 46%,rgba(170,255,170,.24) 58%,rgba(255,230,120,.22) 68%,transparent 82%);background-size:260% 100%;animation:holoSlide 6s ease-in-out infinite alternate}
-.skin-holo .tx-stub{position:relative}.skin-holo .tx-stub>*{position:relative;z-index:1}
-@keyframes holoSlide{from{background-position:100% 0}to{background-position:0 0}}
-.skin-vintage .tx{filter:sepia(.55) saturate(.8) contrast(.96) brightness(.98)}
-.skin-vintage .tx-main::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;background:radial-gradient(rgba(90,60,20,.07) 1px,transparent 1.2px) 0 0/5px 5px,radial-gradient(ellipse at 50% 50%,transparent 55%,rgba(110,70,20,.18))}
-@media (prefers-reduced-motion:reduce){.skin-holo .tx-main::before,.skin-holo .tx-stub::before{animation:none;background-position:50% 0}}
+  background:linear-gradient(105deg,transparent 30%,rgba(255,255,255,.85) 45%,transparent 60%) -200% 0/250% 100% no-repeat,
+    linear-gradient(125deg,#ff9ad5,#ffd36e 18%,#9cf6c4 36%,#7fd3ff 54%,#b59cff 72%,#ff9ad5 90%) 0 0/300% 300%;
+  opacity:.82;animation:holoShine 3.2s ease-in-out infinite,holoHue 9s linear infinite}
+.skin-holo .tx-stub::before{opacity:.95}
+@keyframes holoShine{0%,35%{background-position:-200% 0,0 0}75%,100%{background-position:300% 0,100% 100%}}
+@keyframes holoHue{to{filter:hue-rotate(360deg)}}
+.skin-holo .tx{filter:drop-shadow(0 0 10px rgba(181,156,255,.55)) drop-shadow(0 2px 8px rgba(0,0,0,.2))}
+.skin-holo .tx::after{content:"✦ HOLO";position:absolute;right:14px;bottom:-10px;z-index:3;font:800 10px/1 "IBM Plex Mono",monospace;letter-spacing:.18em;color:#3a1d6e;padding:5px 9px;border-radius:999px;
+  background:linear-gradient(90deg,#ffd6f0,#d6f6ff,#e9dcff);box-shadow:0 2px 6px rgba(0,0,0,.25)}
+/* 빈티지: 누렇게 바랜 종이 · 명조체 · 얼룩 · 빨간 검표 도장 */
+.skin-vintage .tx{filter:sepia(.75) saturate(.9) contrast(1.05)}
+.skin-vintage .tx-main::before,.skin-vintage .tx-stub::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;border-radius:inherit;
+  background:radial-gradient(circle at 78% 70%,rgba(120,72,20,.22) 0 9%,transparent 10% 13%,rgba(120,72,20,.12) 13.5% 14.5%,transparent 15%),
+    radial-gradient(rgba(90,55,15,.10) 1px,transparent 1.3px) 0 0/4px 4px,
+    radial-gradient(ellipse at 50% 50%,rgba(240,222,180,.55) 40%,rgba(150,100,40,.45)),#efe0b9;opacity:.9}
+.skin-vintage .tx-stub{position:relative}
+.skin-vintage .tx :is(b,span,small,em,div,strong){font-family:"Noto Serif KR","Nanum Myeongjo","Batang",serif!important;letter-spacing:0}
+.skin-vintage .tx :is(.bx-route b,.tk-route b){font-weight:900}
+.skin-vintage .tx::after{content:"검표필";position:absolute;right:22%;top:38%;z-index:3;width:62px;height:62px;display:grid;place-items:center;border-radius:50%;
+  font:900 14px/1 "Noto Serif KR",serif;color:rgba(190,30,30,.85);border:3px double rgba(190,30,30,.75);transform:rotate(-16deg);pointer-events:none;mix-blend-mode:multiply}
+@media (prefers-reduced-motion:reduce){.skin-holo .tx-main::before,.skin-holo .tx-stub::before{animation:none}}
+/* 설정의 스킨 미리보기 */
+.skin-prev{display:flex;flex-direction:column;gap:10px;margin:4px 0 6px}
+.skin-prev .tx{font-size:.92em}
+.skin-prev-note{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+.skin-holo .tk-stub,.skin-vintage .tk-stub{color:#241b12!important;text-shadow:none!important}.skin-vintage .tx::after{opacity:.75}

@@ -1,12 +1,9 @@
 /* ---------- 투어디 플러스(구독) 화면과 혜택 ----------
    계산 함수는 js/sub-core.js. 여기서는 화면·버튼·자동 처리만.
-   혜택: 마일리지 1.5배 · 여러 기기 실시간 동기화 · 프리미엄 티켓 스킨·지도 테마 · 상세 분석 · 매달 휴무 도장 +2 · 광고 없이 하루 보너스
+   혜택: 마일리지 1.5배 · 여러 기기 실시간 동기화 · 프리미엄 티켓 스킨·지도 테마 · 상세 분석 · 매달 휴무 도장 +2
    결제는 아직 없음: 테스트 모드(TRAVEL_TEST)에서만 구독을 켜고 끌 수 있다. */
 (function(){
-  const DAILY=10; // 광고 없이 받는 하루 보너스 (공부 1시간어치)
   const t0k=()=>dk(today0()),ym=()=>t0k().slice(0,7);
-  const bonusId=()=>'plus:'+t0k();
-  const claimed=()=>(S.gifts||[]).some(g=>g&&g.id===bonusId());
   const isTest=()=>{try{return TRAVEL_TEST===true}catch(e){return false}};
   const LOCK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>';
   const STAR='<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.5 1.3 6.6L12 17.2 6.1 20.5l1.3-6.6L2.5 9.4l6.6-.8z"/></svg>';
@@ -29,25 +26,20 @@
   function restRow(){const R=RESTP();return `<div class="rest-row"><div><b>휴무 도장</b><span class="rest-dots" aria-label="${R.stamps}장">${stampDots()}</span></div>
     <p class="note">하루 공부를 못 해도 다음 날 앱을 열면 도장 1장으로 정기권이 이어져요. 이틀 연속은 안 돼요. ${subOn()?'플러스는 매달 2장을 더 받아요.':'플러스는 매달 2장을 더 받아요 (최대 3장).'}${R.days.length?` · 지금까지 휴무 ${R.days.length}일`:''}</p></div>`}
 
-  /* ===== 하루 보너스 (광고 없이) ===== */
-  function claimBonus(){if(!subOn()||claimed())return;S.gifts=S.gifts||[];S.gifts.push({id:bonusId(),m:DAILY,t:'플러스 하루 보너스',d:t0k()});save();toast(`플러스 하루 보너스 +${DAILY} 마일리지`);refresh()}
-  window.subBonusChip=()=>subOn()&&!claimed()?`<button class="plus-chip" data-subbonus>${STAR}오늘의 플러스 보너스 +${DAILY} 받기</button>`:'';
-
   /* ===== 구독 화면 ===== */
   const BEN=[
     ['mile','마일리지 1.5배','구독한 날의 공부는 1.5배로 쌓여요. 하루 최대 120 마일리지까지.','1배 · 하루 최대 80'],
-    ['sync','여러 기기 실시간 동기화','폰·태블릿·PC에서 기록이 바로 맞춰져요.','계정에 자동 보관 · 앱을 열 때 맞춤'],
+    ['sync','여러 기기 실시간 동기화','기기 수와 종류 제한 없이 기록이 바로 맞춰져요. 폰·태블릿·PC를 오가도 그대로 이어져요.','계정에 자동 보관 · 앱을 열 때 맞춤'],
     ['skin','프리미엄 꾸미기','홀로그램·빈티지 티켓 스킨, 고지도·야경·위성 지도 테마.','기본 티켓 · 기본 지도'],
     ['stat','상세 분석','시간대별 집중, 이번 주 vs 지난주 과목별 비교, 월별 추세.','기본 통계'],
-    ['rest','매달 휴무 도장 +2','하루 쉬어도 정기권과 연속 보너스가 끊기지 않아요.','처음 1장'],
-    ['gift','광고 없이 하루 보너스','매일 한 번 +10 마일리지를 바로 받아요.','광고를 보고 받기']];
+    ['rest','매달 휴무 도장 +2','하루 쉬어도 정기권과 연속 보너스가 끊기지 않아요.','처음 1장']];
   const ICON={mile:'<path d="M3 12h4l3-8 4 16 3-8h4"/>',sync:'<path d="M20 11a8 8 0 0 0-14-5l-2 2M4 13a8 8 0 0 0 14 5l2-2"/><path d="M4 4v4h4M20 20v-4h-4"/>',skin:'<rect x="3" y="6" width="18" height="12" rx="2"/><path d="M15 6v12" stroke-dasharray="2 2"/>',stat:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',rest:'<circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/>',gift:'<rect x="3" y="9" width="18" height="12" rx="1"/><path d="M12 9v12M3 13h18M12 9C9 9 7 7 8.5 5.5S12 7 12 9c0-2 2-4.5 3.5-3.5S15 9 12 9"/>'};
   function renderSubPage(){
     const P=SUBP(),on=subOn(),since=on&&P.log.length?P.log[P.log.length-1].from:null;
     $('subBody').innerHTML=`<div class="plus-hero${on?' on':''}"><span class="plus-k">${STAR}TOURDY PLUS</span><b>${on?'투어디 플러스 구독 중':'더 멀리, 더 빨리 떠나요'}</b>
         <span>${on?`${since.replace(/-/g,'.')}부터 · 오늘 공부는 1.5배로 쌓이고 있어요`:'공부한 시간이 1.5배 마일리지가 되고, 모든 기기에서 이어져요'}</span></div>
       <ul class="plus-ben">${BEN.map(([k,t,d,f])=>`<li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICON[k]}</svg><div><b>${t}</b><span>${d}</span><small>무료: ${f}</small></div></li>`).join('')}</ul>
-      ${on?`${window.subBonusChip()}<div class="plus-acts"><p class="note">해지해도 이미 받은 마일리지와 도장은 그대로예요. 다음 결제일부터 무료로 바뀌어요.</p>${isTest()?'<button class="secondary" data-subtest>테스트: 구독 끄기</button>':''}</div>`
+      ${on?`<div class="plus-acts"><p class="note">해지해도 이미 받은 마일리지와 도장은 그대로예요. 다음 결제일부터 무료로 바뀌어요.</p>${isTest()?'<button class="secondary" data-subtest>테스트: 구독 끄기</button>':''}</div>`
       :`<div class="plus-price"><button class="plus-plan on" data-plan="y"><small>연간 · 25% 할인</small><b>${SUB_PRICE.y}<em>/년</em></b><span>월 $3 꼴</span></button><button class="plus-plan" data-plan="m"><small>월간</small><b>${SUB_PRICE.m}<em>/월</em></b><span>언제든 해지</span></button></div>
         <button class="primary plus-go" data-subtrial>7일 무료로 시작하기</button>
         <p class="note">무료 체험이 끝나면 고른 요금제로 결제돼요. 체험 중에 해지하면 결제되지 않아요.${isTest()?'':' 결제는 스토어 출시 때 연결돼요.'}</p>
@@ -62,12 +54,23 @@
   function markTravelSet(){
     const on=subOn(),o=TOPT();
     $('mapTheme').querySelectorAll('[data-mt]').forEach(b=>{const lock=!on&&b.dataset.mt!=='base';b.classList.toggle('locked',lock);if(lock&&!b.querySelector('svg'))b.insertAdjacentHTML('afterbegin',LOCK);if(!lock)b.querySelector('svg')?.remove()});
-    $('tkSkin').querySelectorAll('[data-skin]').forEach(b=>{const lock=!on&&b.dataset.skin!=='base';b.classList.toggle('locked',lock);if(lock&&!b.querySelector('svg'))b.insertAdjacentHTML('afterbegin',LOCK);if(!lock)b.querySelector('svg')?.remove();b.setAttribute('aria-pressed',(on?(o.skin||'base'):'base')===b.dataset.skin)});
+    const cur=on?(o.skin||'base'):'base',shown=prevSkin||cur;
+    $('tkSkin').querySelectorAll('[data-skin]').forEach(b=>{const lock=!on&&b.dataset.skin!=='base';b.classList.toggle('locked',lock);if(lock&&!b.querySelector('svg'))b.insertAdjacentHTML('afterbegin',LOCK);if(!lock)b.querySelector('svg')?.remove();b.setAttribute('aria-pressed',shown===b.dataset.skin)});
+    renderSkinPreview(shown,!on&&shown!=='base');
   }
+  // 고른 스킨을 바로 보여 주는 미리보기 (무료는 잠긴 스킨도 미리보기만 할 수 있음)
+  let prevSkin=null;
+  const SKIN_NAME={base:'기본',holo:'홀로그램',vintage:'빈티지'},SKIN_DESC={base:'깔끔한 기본 승차권',holo:'움직이는 무지갯빛 포일과 HOLO 인증 띠',vintage:'바랜 종이, 명조체 글씨, 빨간 검표 도장'};
+  function renderSkinPreview(sk,locked){const el=$('skinPreview');if(!el)return;
+    el.className='skin-prev'+(sk!=='base'?' skin-'+sk:'');
+    let tk='';try{const K=kr(tr()),a=K.home&&KRM[K.home]?K.home:'seoul',b=Object.keys(KRM).find(k=>k!==a&&krCost(a,k)<260)||'busan';tk=krTicket(a,b,{done:1,d:dk(today0())})}catch(e){}
+    el.innerHTML=tk+`<div class="skin-prev-note"><span><b>${SKIN_NAME[sk]}</b> · ${SKIN_DESC[sk]}</span>${locked?'<button class="primary" data-subgo>플러스로 쓰기</button>':''}</div>`}
   const goSub=msg=>{if(msg)toast(msg);setTab('set');setPage='sub';renderSet();window.scrollTo({top:0,behavior:'smooth'})};
   // 지도 테마: 무료는 기본만 (원래 처리기보다 먼저 가로챈다)
   $('mapTheme').addEventListener('click',e=>{const b=e.target.closest('[data-mt]');if(b&&!subOn()&&b.dataset.mt!=='base'){e.stopImmediatePropagation();goSub('고지도·야경·위성 지도는 투어디 플러스에서 쓸 수 있어요')}},true);
-  $('tkSkin').addEventListener('click',e=>{const b=e.target.closest('[data-skin]');if(!b)return;if(!subOn()&&b.dataset.skin!=='base')return goSub('프리미엄 티켓 스킨은 투어디 플러스에서 쓸 수 있어요');TOPT().skin=b.dataset.skin;save();applySkin();markTravelSet()});
+  $('tkSkin').addEventListener('click',e=>{const b=e.target.closest('[data-skin]');if(!b)return;const sk=b.dataset.skin;
+    if(!subOn()){prevSkin=sk==='base'?null:sk;markTravelSet();return} // 무료: 미리보기만
+    prevSkin=null;TOPT().skin=sk;save();applySkin();markTravelSet();toast(`티켓 스킨을 '${SKIN_NAME[sk]}'(으)로 바꿨어요. 모든 승차권·탑승권에 적용돼요`)});
 
   /* ===== 상세 분석 ===== */
   function studySessions(){return (S.sessions||[]).filter(x=>x.kind==='study'&&!x.ex&&x.end>x.start)}
@@ -104,18 +107,17 @@
   window.subTestBtn=()=>isTest()?`<button data-subtest>플러스 ${subOn()?'끄기':'켜기'}</button>`:'';
   document.addEventListener('click',e=>{
     if(e.target.closest('[data-subtest]')&&isTest()){toggleSub(!subOn());return}
-    if(e.target.closest('[data-subbonus]')){claimBonus();return}
     if(e.target.closest('[data-subgo]')){goSub();return}
     const pl=e.target.closest('[data-plan]');if(pl){plan=pl.dataset.plan;document.querySelectorAll('.plus-plan').forEach(b=>b.classList.toggle('on',b===pl));return}
     if(e.target.closest('[data-subtrial]')){if(isTest())toggleSub(true);else toast('결제는 스토어 출시 때 연결돼요');return}
   });
-  {const base=renderSet;renderSet=function(){const r=base.apply(this,arguments);if(setPage==='sub')renderSubPage();if(setPage==='travel')markTravelSet();return r}}
+  {const base=renderSet;renderSet=function(){const r=base.apply(this,arguments);if(setPage==='sub')renderSubPage();if(setPage==='travel')markTravelSet();else prevSkin=null;return r}}
   {const base=renderStats;renderStats=function(){const r=base.apply(this,arguments);renderPro();return r}}
   {const base=renderPassCard;renderPassCard=function(){const r=base.apply(this,arguments);const el=$('achPassCard');if(el&&!el.querySelector('.rest-row'))el.insertAdjacentHTML('beforeend',restRow());return r}}
   {const base=renderMilePage;renderMilePage=function(){const r=base.apply(this,arguments);const el=$('mileBody');if(el){
-    el.insertAdjacentHTML('afterbegin',subOn()?`<div class="plus-mile on"><span>${STAR}플러스 · 마일리지 1.5배 적용 중</span>${window.subBonusChip()}</div>`:`<button class="plus-mile" data-subgo><span>${STAR}플러스로 마일리지 1.5배</span><small>월 ${SUB_PRICE.m} · 7일 무료</small></button>`);
+    el.insertAdjacentHTML('afterbegin',subOn()?`<div class="plus-mile on"><span>${STAR}플러스 · 마일리지 1.5배 적용 중</span></div>`:`<button class="plus-mile" data-subgo><span>${STAR}플러스로 마일리지 1.5배</span><small>월 ${SUB_PRICE.m} · 7일 무료</small></button>`);
     if(subOn())el.querySelectorAll('.tv-rules li').forEach(li=>{if(li.textContent.includes('최대 8시간'))li.innerHTML='하루에 <b>최대 8시간</b>까지 쌓여요. 플러스는 1.5배라 <b>최대 120 마일리지</b>예요.'})}return r}}
   applySkin();restAuto();
   setInterval(restAuto,6e4);document.addEventListener('visibilitychange',()=>{if(!document.hidden)restAuto()});
-  window.TourdyPlus={toggle:toggleSub,restAuto,claimBonus};
+  window.TourdyPlus={toggle:toggleSub,restAuto};
 })();
