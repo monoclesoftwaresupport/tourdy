@@ -2059,3 +2059,4 @@ button.spm-n{cursor:pointer}button.spm-n:hover{opacity:1}
 .sw i{display:block}.sw i:first-child{background:var(--k-top) top/100% 3px no-repeat,var(--k-pat),var(--k-bg)}.sw i:last-child{background:var(--k-stub);border-left:1px dashed var(--k-line)}
 .sw.sw-base i:first-child{background:#f4f8ff;border-top:4px solid #1d6fd8}.sw.sw-base i:last-child{background:#1d6fd8}
 .sw.sw-vintage i:first-child{background:#efe0b9}.sw.sw-vintage i:last-child{background:#9b7b55}
+#achPassCard .tcard{margin-inline:auto} /* 정기권 카드 가운데 정렬 */
