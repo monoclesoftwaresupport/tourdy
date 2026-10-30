@@ -12,9 +12,10 @@ const x=ARQ.shift();if(x.w==='space')return spArrival(x);if(x.w==='kr'?!(KRM[x.f
     $('arrMsg').innerHTML=`<span class="arr-flag">${flag(x.t)}</span><b>${B[2]} 도착!</b><span>${B[1]} 입국 도장이 찍혔어요</span>`}
   const extra=(x.free?'<div class="arr-route">누적 공부 30분 선물 · 무료 최고급 티켓 · 마일리지 차감 없음</div>':'')+(TSND().anno?`<div class="arr-anno"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 9v6h4l5 4V5L8 9zM16 9a4 4 0 0 1 0 6M18.5 6.5a7.5 7.5 0 0 1 0 11"/></svg><span>${annoText(x)}</span></div>`:'')+(x.secret?`<div class="arr-route sec">비밀 목적지 발견! 특별한 도장을 받았어요</div>`:'')+(x.certs&&x.certs.length?`<div class="arr-cert">${x.certs.map(c=>`<button class="secondary" data-certv="${c.id}">${c.title} · 인증서 보기</button>`).join('')}</div>`:'')+(x.route?`<div class="arr-route">${x.route} 완주! 금색 표를 모두 모았어요</div>`:'')+(x.hid&&x.hid.length?`<div class="arr-hid">${x.hid.map(id=>hstamp(id,dk(today0()),1)).join('')}<span>히든 도전 과제 ${x.hid.map(id=>`'${HIDX[id][1]}'`).join(', ')} 달성!</span></div>`:'')
     +(x.w==='kr'?postcard('kr:'+x.t,krArt(x.t),KRM[x.t][1],ymd(pk(x.d))):postcard('w:'+x.t,worldArt(x.t),NAT[x.t][2],ymd(pk(x.d))));
-  $('arrMsg').insertAdjacentHTML('beforeend',extra);
+  $('arrMsg').insertAdjacentHTML('beforeend',(window.arrDropHtml?arrDropHtml(x):'')+extra); // 현지 기념품 뽑기
   $('arrOk').textContent='확인';arrSound(snd);
   const tk=$('arrTk').firstElementChild,st=tk.querySelector('.tx-stub'),mn=tk.querySelector('.tx-main'),vert=st.offsetTop>mn.offsetTop+5;if(vert)tk.classList.add('vert');
+  if(window.arrPlay)return arrPlay(el,tk,st,vert,x); // 직접 뜯고 꾹 눌러 찍기
   arrTimers=[setTimeout(()=>{tk.classList.add('ripping','edge');ripSound()},800),
     setTimeout(()=>{tk.classList.add('gone','edge');tk.style.transform=vert?`translateY(${st.offsetHeight/2}px)`:`translateX(${st.offsetWidth/2}px)`},2000),
     setTimeout(()=>{el.classList.add('show-msg');if(x.hid&&x.hid.length)vibe();if(TSND().anno)speak(annoText(x))},2500)];
@@ -28,7 +29,7 @@ function showTicket(id){
   $('arrTk').innerHTML=krTicket(f,id,{torn:1,d,free:!!entry.free,gold:goldHist('kr',f,id),cls:entry.tier===2?1:0});vibe();
   $('arrMsg').innerHTML=`<b>${KRM[id][1]}</b><span>${KRM[f][1]}에서 출발${d?' · '+ymd(pk(d))+' 도착':''}</span>`+(secret?'<span class="secret-ticket-label">✦ 비밀 목적지 티켓</span>':'')+postcard('kr:'+id,krArt(id),KRM[id][1],d?ymd(pk(d)):'');$('arrOk').textContent='닫기';
 }
-function closeArrival(){arrTimers.forEach(clearTimeout);$('arrive').hidden=true;arrOpen=false;setTimeout(showArrival,250)}
+function closeArrival(){arrTimers.forEach(clearTimeout);arrTimers=[];if(window.arrPlayReset)arrPlayReset();$('arrive').hidden=true;arrOpen=false;setTimeout(showArrival,250)}
 $('arrOk').addEventListener('click',closeArrival);
 $('arrive').addEventListener('click',e=>{if(e.target===$('arrive'))closeArrival()});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&arrOpen)closeArrival()});
@@ -187,7 +188,7 @@ function renderAch(){const T=tr(),K=kr(T),R=RT(),H=T.hid||{},total=K.done.length
     ['특별 루트',ROUTES.map(r=>it(r.name,(r.w==='kr'?'국내 · ':'세계 · ')+plName(r.w,r.stops[0])+' 출발',R.done[r.id]?1:0,1,'#c9a227'))]];
   $('achList').innerHTML=groups.map(([g,items])=>`<div class="ach-g"><div class="ach-gh"><b>${g}</b><span>${items.filter(x=>x.ok).length} / ${items.length}</span></div><div class="achs">${items.map(x=>`<div class="ach${x.ok?' ok':''}" style="--k:${x.col}"><span class="ach-i">${x.ok?'★':'☆'}</span><div><b>${x.name}</b><small>${x.desc}</small>${x.goal>1?`<div class="ach-bar"><i style="width:${x.cur/x.goal*100}%"></i></div><small class="ach-n">${x.cur.toLocaleString()} / ${x.goal.toLocaleString()}</small>`:''}</div></div>`).join('')}</div></div>`).join('')
     +`<div class="ach-g"><div class="ach-gh"><b>히든 도전 과제</b><span>${Object.keys(H).length} / ${HIDDEN.length}</span></div><p class="note">조건은 비밀이에요. 여행하다 보면 저절로 열려요.</p><div class="hss">${HIDDEN.map(x=>`<button class="hsw" data-hid="${x[0]}" aria-label="${H[x[0]]?x[1]:'숨겨진 과제'} 설명 보기">${hstamp(x[0],H[x[0]])}<b>${H[x[0]]?x[1]:'???'}</b></button>`).join('')}</div></div>`;
-  renderYear();renderSouv();renderAlbum();renderPassCard();
+  renderYear();renderSouv();if(window.renderGacha)renderGacha();renderAlbum();renderPassCard();
 }
 function renderYear(){const T=tr(),K=kr(T),pd=perDay(true),ys=new Set([new Date().getFullYear()]);
   Object.keys(pd).forEach(k=>ys.add(+k.slice(0,4)));K.done.forEach(d=>ys.add(+d.d.slice(0,4)));T.stamps.forEach(s=>ys.add(+s.d.slice(0,4)));

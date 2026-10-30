@@ -1,0 +1,470 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>투어디 TOURDY</title>
+<meta name="description" content="공부한 시간만큼 떠나는 여행 — 과목별 타이머, 할 일, 대시보드">
+<meta name="theme-color" content="#f2f4f6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#101014" media="(prefers-color-scheme: dark)">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="투어디">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="favicon-64.png">
+<link rel="stylesheet" href="css/app.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=Noto+Sans+KR:wght@400;500;600;700;800&family=Noto+Color+Emoji&family=Noto+Serif+KR:wght@600;900&family=IBM+Plex+Mono:wght@500;600&display=swap">
+
+
+</head>
+<body>
+<div class="wrap">
+
+  <nav class="tabs" role="tablist">
+    <button role="tab" data-tab="home" aria-selected="true">홈</button>
+    <button role="tab" data-tab="todo" aria-selected="false">할 일</button>
+    <button role="tab" data-tab="stats" aria-selected="false">대시보드</button>
+    <button role="tab" data-tab="travel" aria-selected="false" id="tabTravel" hidden>여행</button>
+    <button role="tab" data-tab="set" aria-selected="false">설정</button>
+  </nav>
+
+  <!-- 홈 -->
+  <div id="vHome" class="col narrow">
+    <section class="panel welcome" id="welcome" hidden>
+      <div><small class="wl-k">처음 오셨네요</small><h2 class="wl-h">어떤 과목을 공부하나요?</h2><p class="note">고른 과목으로 바로 시작할 수 있어요. 색과 아이콘은 나중에 프리셋 목록에서 바꿀 수 있어요.</p></div>
+      <div class="wl-chips" id="wlChips"></div>
+      <div class="row"><input class="field grow" id="wlCustom" type="text" placeholder="다른 과목 직접 입력" autocomplete="off" enterkeyhint="done"><button class="secondary" id="wlAdd">추가</button></div>
+      <div class="wl-a"><button class="secondary" id="wlSkip">나중에</button><button class="primary" id="wlGo">시작하기</button></div>
+    </section>
+    <div class="seg" id="homeSeg"><button data-h="run" aria-pressed="true">공부 시작</button><button data-h="preset" aria-pressed="false">프리셋 목록</button></div>
+    <div id="hRun" class="col">
+      <aside class="preset-hint" id="presetHint" hidden>
+        <div><b>먼저 공부할 과목을 추가해 주세요</b><p>타이머는 프리셋 목록에 있는 과목으로만 기록돼요. 위에서 과목을 고르거나 프리셋 목록에서 직접 추가해 주세요.</p></div>
+        <button class="primary" id="presetHintGo">프리셋 목록 열기</button>
+      </aside>
+      <aside class="preset-hint mode-hint" id="modeHint" hidden>
+        <div><b>공부 시작 방식을 바꿀 수 있어요</b><p id="modeHintText"></p></div>
+        <div class="row"><button class="primary" id="modeHintGo">설정 바로 가기</button><button class="secondary" id="modeHintClose">알겠어요</button></div>
+      </aside>
+      <section class="panel" aria-label="공부 시작">
+        <div class="panel-head"><h2>공부 시작</h2>
+</div>
+        <p class="err" id="pipErr" hidden></p>
+        <video id="pipVideo" muted playsinline aria-hidden="true" style="position:fixed;left:-9999px;top:0;width:2px;height:2px"></video>
+        <div id="mTimer" class="col">
+        <div class="clock" id="clock">
+          <div class="who" id="who"></div><div class="time" id="big">0:00:00</div>
+          <div class="ctrl" id="ctrl" hidden>
+            <button data-k="resume" class="resume" hidden>이어서 공부</button><button data-k="rest" aria-pressed="false">휴식</button><button data-k="waste" aria-pressed="false">딴짓</button><button data-k="stop">정지</button>
+            <span class="hint" id="ctrlHint"></span>
+          </div>
+        </div>
+        <ul class="subs" id="subs"></ul>
+        </div>
+        <div id="mPlan" class="plan" hidden>
+          <div class="plan-head"><h3 id="planTitle">다음 공부</h3><button class="secondary" id="planToggle">예약</button></div>
+          <div class="plan-top">
+            <div class="plan-num"><div class="plabel" id="planLbl">남은 준비 시간</div><div class="time" id="planBig">00:00</div><div class="note" id="planSub"></div></div>
+            <button class="go" id="planGo"><svg viewBox="0 0 14 14" fill="currentColor"><path d="M3 1.5v11l9.5-5.5z"/></svg><span>바로 시작</span></button>
+          </div>
+          <div class="pbar" id="planBar" hidden><i id="planFill"></i></div>
+          <div class="wheels" id="wheels"><div class="wheel" id="wStart" tabindex="0" aria-label="시작 시각"></div><div class="wheel" id="wDur" tabindex="0" aria-label="공부 시간"></div></div>
+          <div class="pomo" id="pomoBox">
+            <button class="switch sm" id="pomoSw" role="switch" aria-checked="false"><span class="sw-t">뽀모도로 반복</span><span class="sw-k"><i></i></span></button>
+            <div class="pomo-o" id="pomoOpts" hidden>
+              <div class="pomo-r"><span>세트</span><div class="seg" id="pomoSets"></div></div>
+              <div class="pomo-r"><span>휴식</span><div class="seg" id="pomoRest"></div></div>
+              <p class="note" id="pomoSum"></p>
+            </div>
+          </div>
+          <div class="pchips" id="planSubs"></div>
+          <div class="pacts" id="planActs" hidden><button class="on" id="planResume" hidden>이어서 공부</button><button class="on" id="planSkip" hidden>휴식 건너뛰기</button><div class="pacts-off" id="planOff"><button data-k="rest" aria-pressed="false">휴식</button><button data-k="waste" aria-pressed="false">딴짓</button></div><button id="planExt">5분 연장</button><button id="planEnd">지금 끝내기</button></div>
+        </div>
+        <div class="goalrow" id="goalRow" hidden><div class="goaltxt"><span id="goalTxt"></span><b id="goalPct"></b></div><div class="pbar"><i id="goalFill"></i></div></div>
+        <div class="tdest" id="todayDest" hidden></div>
+        <div class="tl"><div class="tl-bar" id="tl"></div><div class="tl-axis" id="tlAxis"></div></div>
+        <div class="eff" id="eff"></div>
+        <details class="rec" id="recWrap">
+          <summary><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="m4 6 4 4 4-4"/></svg>기록 <em id="recN"></em></summary>
+          <ul class="recs" id="recList"></ul>
+          <form class="recform" id="recForm">
+            <strong id="recFormTitle" style="font-family:var(--serif);font-size:15px">직접 기록 추가</strong>
+            <div class="recrow">
+              <select class="field" id="recSub" aria-label="과목"></select>
+              <input class="field" type="date" id="recD" aria-label="날짜" required>
+              <input class="field" type="time" id="recS" aria-label="시작" required>
+              <span class="note">–</span>
+              <input class="field" type="time" id="recE" aria-label="끝" required>
+              <span class="recbtns"><button class="secondary" type="button" id="recCancel" hidden>취소</button><button class="primary" type="submit" id="recSave">추가</button></span>
+            </div>
+            <input class="field recmemo" id="recMemo" type="text" maxlength="80" placeholder="메모 (선택) · 예: 3강 연습문제" autocomplete="off">
+            <p class="note">지난 날짜로 추가한 기록은 통계에는 들어가지만 여행 마일리지에는 반영되지 않아요.</p>
+            <p class="err" id="recErr" hidden></p>
+          </form>
+        </details>
+      </section>
+
+    </div>
+    <div id="hPreset" class="col" hidden>
+      <section class="panel" aria-label="프리셋 목록">
+        <div class="panel-head"><h2>프리셋 목록</h2><span class="note">과목마다 색과 아이콘을 정해요</span></div>
+        <ul class="presets" id="presets"></ul>
+        <button class="ghostadd" id="addPreset">+ 새 프리셋</button>
+      </section>
+    </div>
+  </div>
+
+  <!-- 할 일 -->
+  <div id="vTodo" class="col narrow" hidden>
+      <section class="panel" aria-label="할 일">
+        <button class="dday-chip" id="dday" hidden></button>
+        <div class="panel-head"><h2 id="taskTitle">오늘 할 일</h2><span class="note" id="taskCount"></span></div>
+        <div class="daynav">
+          <button class="dbtn" id="tdPrev" aria-label="이전 날"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 3 5 8l5 5"/></svg></button>
+          <button class="dbtn dlabel" id="tdLabelBtn" aria-expanded="false" aria-haspopup="dialog"><span id="tdLabel"></span></button>
+          <button class="dbtn" id="tdNext" aria-label="다음 날"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m6 3 5 5-5 5"/></svg></button>
+          <button class="dbtn dtoday" id="tdToday">오늘</button>
+          <div class="cal" id="cal" role="dialog" aria-label="날짜 고르기" hidden></div>
+        </div>
+        <div class="carry" id="carry" hidden><span id="carryTxt"></span><button class="primary" id="carryGo">가져오기</button><button class="textbtn" id="carryNo">닫기</button></div>
+        <form class="addtask" id="addTask"><span class="plus">+</span><input id="taskInput" type="text" placeholder="작업 추가" autocomplete="off" enterkeyhint="done"><select id="taskSub" aria-label="과목"></select><select id="taskEst" aria-label="예상 시간" hidden><option value="0">예상</option><option value="30">30분</option><option value="60">1시간</option><option value="90">1시간 30분</option><option value="120">2시간</option><option value="180">3시간</option></select></form>
+        <button type="button" class="textbtn multi-open" id="multiOpen" aria-expanded="false" aria-controls="multiBox">+ 한번에 여러개 생성</button>
+        <div class="multi" id="multiBox" hidden></div>
+        <ul class="tasks" id="todo"></ul>
+        <button class="donehead" id="doneToggle" aria-expanded="true" hidden><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="m4 6 4 4 4-4"/></svg>완료됨 <em id="doneN"></em></button>
+        <ul class="tasks" id="done"></ul>
+      </section>
+      <section class="panel" id="repPanel" aria-label="반복 할 일">
+        <div class="panel-head"><h2>반복 할 일 <span class="mcount" id="repN0"></span></h2><span class="note">정한 요일마다 할 일 목록에 자동으로 들어가요</span></div>
+        <ul class="reps" id="reps"></ul>
+        <details class="rep-add" id="repAdd">
+          <summary><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="m4 6 4 4 4-4"/></svg>새 반복 할 일 만들기</summary>
+          <form class="addsub" id="repForm">
+            <div class="row"><input class="field grow" id="repText" type="text" placeholder="예: 영단어 Day {n}" autocomplete="off" required>
+              <select class="field" id="repSub" aria-label="과목"></select></div>
+            <div class="row"><div class="daychips" id="repDays"></div></div>
+            <div class="row"><label class="goalin">{n} 시작 번호 <input class="field" id="repN" type="number" value="1" min="0"></label><button class="primary" type="submit">추가</button></div>
+            <p class="note">문구에 {n}을 넣으면 해당 요일이 올 때마다 1씩 올라가요. 시작 번호는 오늘 기준이에요.</p>
+          </form>
+        </details>
+      </section>
+      <section class="panel" id="pvaPanel" hidden><div class="panel-head"><h2>계획 vs 실제</h2><span class="note" id="pvaTot"></span></div>
+        <ul class="pva" id="pvaList"></ul><p class="note">예상 시간을 적은 할 일과 이날 실제 공부 시간을 과목별로 비교해요. 회색은 계획, 색 막대는 실제예요.</p></section>
+      <section class="panel" aria-label="달성하지 못한 일">
+        <div class="panel-head"><h2>달성하지 못한 일 <span class="mcount" id="missN"></span></h2><button class="textbtn" id="missAll" hidden>모두 오늘로</button></div>
+        <div id="missed"></div>
+      </section>
+      <section class="panel" id="booksPanel" hidden><div class="panel-head"><h2>교재 진도</h2></div>
+        <p class="bpace" id="bookPace"></p><ul class="books" id="bookList"></ul>
+        <form class="addsub" id="bookForm"><div class="row"><input class="field grow" id="bookName" type="text" placeholder="교재 이름 · 예: 통계학 심화1" autocomplete="off" required>
+          <select class="field" id="bookSub" aria-label="과목"></select></div>
+          <div class="row"><label class="goalin">강 수 <input class="field" id="bookUnits" type="number" min="1" max="200" placeholder="30" required></label>
+          <label class="goalin">목표 회독 <input class="field" id="bookTarget" type="number" min="1" max="5" value="3"></label><button class="primary" type="submit">추가</button></div></form>
+      </section>
+  </div>
+
+  <!-- 통계 -->
+  <div id="vStats" class="col" hidden>
+    <div class="panel-head">
+      <div class="seg" id="rangeSeg"><button data-r="1" aria-pressed="true">오늘</button><button data-r="7" aria-pressed="false">일주일</button><button data-r="30" aria-pressed="false">한 달</button><button data-r="365" aria-pressed="false">1년</button></div>
+      <span class="note" id="rangeLbl"></span>
+    </div>
+    <div class="banner" id="exBanner" hidden><span>예시 기록이 섞여 있어요. 실제 기록만 보려면 지워 주세요.</span><button class="secondary" data-clear-ex>예시 지우기</button></div>
+    <div class="tiles" id="tiles"></div>
+    <section class="panel" id="bestPanel" hidden><div class="panel-head"><h2>최고 기록</h2></div><ul class="best" id="best"></ul></section>
+    <section class="panel"><div class="panel-head"><h2 id="barsTitle">날짜별 공부 시간</h2></div><div class="chart" id="bars"></div></section>
+    <section class="panel" id="effPanel" hidden><div class="panel-head"><h2>집중 효율</h2><span class="note" id="effAvg"></span></div>
+      <div class="chart"><div class="yax"><span>100%</span><span>50%</span><span>0%</span></div><div class="effplot" id="effPlot"></div><div class="effx" id="effX"></div></div>
+    </section>
+    <section class="panel" id="heatPanel" hidden><div class="panel-head"><h2>공부 잔디</h2><span class="note" id="streakTxt"></span></div>
+      <div class="heat-wrap"><div class="heat" id="heat"></div></div>
+      <div class="hleg" id="hleg"></div>
+    </section>
+    <section class="panel"><div class="panel-head"><h2>과목 비율</h2></div><div class="share" id="share"></div></section>
+    <section class="panel" id="memoPanel" hidden><div class="panel-head"><h2>공부 메모</h2><span class="note" id="memoN"></span></div><ul class="mlist" id="memoList"></ul></section>
+    <section class="panel pro-stats" id="proStats" aria-label="상세 분석"></section>
+    <button class="secondary wkbtn" id="openReport">지난주 리포트 보기</button>
+  </div>
+
+  <!-- 설정 -->
+  <div id="vTravel" class="col narrow" hidden>
+    <div class="seg worldseg" id="tvWorld"><button data-w="korea" aria-pressed="true">국내</button><button data-w="earth" aria-pressed="false">세계</button><button data-w="space" aria-pressed="false" id="tvSpaceTab">???</button><button data-w="week" aria-pressed="false">주간</button><button data-w="ach" aria-pressed="false">업적</button></div>
+    <section class="dline" id="tvDline" hidden></section>
+    <div class="sp-wrap space-only"><section class="space" id="tvSpace" aria-label="잠긴 콘텐츠"></section><div class="sp-veil" id="spVeil" hidden></div></div>
+    <section class="panel korea-only" id="krNow"></section>
+    <section class="map-card korea-only" id="krMap"></section>
+    <section class="bp-wrap korea-only" id="krTrip" hidden></section>
+    <section class="kr-board korea-only" aria-label="국내 출발 안내"><div class="kr-bh"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c-4 0-7 .5-7 4v9.5A2.5 2.5 0 0 0 7.5 18L6 19.5v.5h2.2l2-2h3.6l2 2H18v-.5L16.5 18a2.5 2.5 0 0 0 2.5-2.5V6c0-3.5-3-4-7-4zM7.5 16a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm3.5-6H7V6h4v4zm5.5 6a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm.5-6h-4V6h4v4z"/></svg><span id="krBoardT">출발 안내</span><small id="krBoardS">가까운 순</small></div>
+      <input class="fids-q" id="krSearch" type="search" placeholder="시·군이나 도 이름으로 찾기" autocomplete="off">
+      <div class="kr-groups" id="krGroups"></div><ul class="kr-list" id="krList"></ul></section>
+    <section class="panel korea-only" id="krRoutes"></section>
+    <section class="panel korea-only"><div class="panel-head"><h2>지역 도장</h2><span class="note" id="krStyleLbl"></span></div><div class="ks-head" id="krStampHead"></div><div class="ks-regs" id="krStamps"></div></section>
+    <section class="wlock" id="worldLock"></section>
+    <section class="panel earth-only" id="tvNow"></section>
+    <section class="map-card earth-only" id="tvMap"></section>
+    <section class="bp-wrap earth-only" id="tvFlight" hidden></section>
+    <section class="fids earth-only" id="tvPicker" aria-label="출발 안내판">
+      <div class="fids-h"><span class="fids-t"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 15.5v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V8.5l-8 5v2l8-2.5V18l-2 1.5V21l3.5-1 3.5 1v-1.5L13 18v-5z" transform="rotate(45 12 12)"/></svg>DEPARTURES</span><span class="fids-s" id="fidsFrom"></span></div>
+      <input class="fids-q" id="tvSearch" type="search" placeholder="도시, 나라, 공항 코드로 찾기" autocomplete="off">
+      <div class="tv-conts" id="tvConts"></div>
+      <div class="fids-cols"><span>목적지</span><span>공항</span><span>마일</span><span>상태</span></div>
+      <ul class="fids-list" id="tvList"></ul>
+    </section>
+    <section class="panel earth-only" id="tvRoutes"></section>
+    <section class="panel earth-only">
+      <div class="panel-head"><h2>여권</h2><span class="note" id="tvStyleLbl">입국 도장</span></div>
+      <div class="stamps" id="tvStamps"></div>
+    </section>
+    <section class="panel week-only" id="tvWeek" aria-label="주간 챌린지"></section>
+    <section class="panel ach-only" id="achPassCard"></section>
+    <section class="panel ach-only" id="achPass"></section>
+    <section class="panel ach-only" id="achSouv"></section>
+    <section class="panel ach-only" id="achCards"></section>
+    <section class="panel ach-only" id="achYear"></section>
+    <section class="panel ach-only" id="achList"></section>
+    <section class="panel ach-only" id="achWeekly" hidden></section>
+    <section class="splock earth-only" id="spLock" hidden><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c3 2.2 4.5 5.6 4.5 9.4V15l2 2.2V20l-3.2-1.6H8.7L5.5 20v-2.8l2-2.2v-3.6C7.5 7.6 9 4.2 12 2zm0 6.2a1.8 1.8 0 1 0 0 3.6 1.8 1.8 0 0 0 0-3.6zM10.4 19.5h3.2L12 22.5z"/></svg>
+      <div><b>우주 탐사 · 잠김</b><span>모든 나라에 입국하면 우주로 떠날 수 있어요 · <span id="spLockN"></span></span></div></section>
+  </div>
+  <div id="vSet" class="col narrow" hidden>
+    <section class="panel" id="setList">
+      <div class="panel-head"><h2>설정</h2></div>
+      <ul class="setlist" id="setItems"></ul>
+      <button class="secondary tour-replay" id="tourReplay">튜토리얼 다시 보기</button>
+    </section>
+    <button class="backbtn" id="setBack" hidden><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 3 5 8l5 5"/></svg>설정</button>
+    <section class="panel" data-page="account" hidden>
+      <div class="panel-head"><h2>계정</h2><span class="note">로그인하면 기기끼리 기록이 이어져요</span></div>
+      <div id="accountBody"></div>
+    </section>
+    <section class="panel" data-page="invite" hidden>
+      <div class="panel-head"><h2>친구 초대</h2><span class="note">초대하면 둘 다 마일리지</span></div>
+      <div id="inviteBody"></div>
+    </section>
+    <section class="panel" data-page="goal" hidden>
+      <div class="panel-head"><h2>목표 시간</h2><span class="note">하루에 채우고 싶은 순공 시간</span></div>
+      <div class="wheels one"><div class="wheel" id="wGoal" tabindex="0" aria-label="하루 목표 순공"></div></div>
+      <p class="note" id="goalNote"></p>
+      <div class="panel-head" style="margin-top:14px"><h2>공부 잔디 기준</h2><span class="note">하루 순공이 이만큼 넘으면 색이 바뀌어요</span></div>
+      <ul class="hsteps" id="hsteps"></ul>
+    </section>
+    <section class="panel" data-page="notify" hidden>
+      <div class="panel-head"><h2>알림</h2></div>
+      <div class="swlist">
+        <button class="switch" data-sw="notify.sound" role="switch"><span class="sw-t">알림음<small>공부 시작·끝, 세트 전환 때 소리</small></span><span class="sw-k"><i></i></span></button>
+        <button class="switch" data-sw="notify.memo" role="switch"><span class="sw-t">공부 메모 묻기<small>1분 넘게 공부하면 끝날 때 한 줄 메모</small></span><span class="sw-k"><i></i></span></button>
+        <button class="switch" data-sw="notify.push" role="switch"><span class="sw-t">브라우저 알림<small id="pushNote">다른 창을 보고 있을 때도 알려 줘요</small></span><span class="sw-k"><i></i></span></button>
+      </div>
+      <div class="push-warn" id="pushWarn" role="alert" hidden><b>알림이 꺼져 있어요</b><span id="pushWarnTxt"></span><button class="secondary" id="pushWarnGo" hidden>설정 열기</button></div>
+      <button class="secondary" id="testSound">알림음 들어 보기</button>
+      <p class="note">아이폰·아이패드는 무음 모드면 소리가 나지 않아요. 앱 화면이 꺼져 있으면 기기에 따라 알림이 늦게 오거나 오지 않을 수 있어요.</p>
+    </section>
+    <section class="panel" data-page="mile" hidden>
+      <div class="panel-head"><h2>마일리지</h2></div>
+      <div id="mileBody"></div>
+    </section>
+    <section class="panel" data-page="sound" hidden>
+      <div class="panel-head"><h2>소리</h2><span class="note">여행 효과음</span></div>
+      <div class="swlist">
+        <button class="switch" data-snd="arrive" role="switch"><span class="sw-t">도착 효과음<small>기차·버스·비행기·배마다 다른 소리</small></span><span class="sw-k"><i></i></span></button>
+        <button class="switch" data-snd="rip" role="switch"><span class="sw-t">표 찢는 소리<small>도착할 때 표를 뜯는 소리</small></span><span class="sw-k"><i></i></span></button>
+        <button class="switch" data-snd="anno" role="switch"><span class="sw-t">도착 안내 방송<small>"이번 역은 부산, 부산역입니다" 같은 안내 문구</small></span><span class="sw-k"><i></i></span></button>
+        <button class="switch" data-snd="voice" role="switch"><span class="sw-t">안내 방송 음성<small>기기 음성으로 소리 내어 읽어 줘요</small></span><span class="sw-k"><i></i></span></button>
+        <button class="switch" data-snd="vibe" role="switch"><span class="sw-t">진동<small>도장을 누를 때 짧게 (지원하는 폰만)</small></span><span class="sw-k"><i></i></span></button>
+      </div>
+      <div class="plabel">들어 보기</div>
+      <div class="sndtest"><button class="secondary" data-sndt="train">기차</button><button class="secondary" data-sndt="bus">버스</button><button class="secondary" data-sndt="plane">비행기</button><button class="secondary" data-sndt="ship">배</button><button class="secondary" data-sndt="rip">표 찢기</button></div>
+    </section>
+    <section class="panel" data-page="extra" hidden>
+      <div class="panel-head"><h2>추가 기능</h2><span class="note">필요한 것만 켜서 쓰세요</span></div>
+      <div class="swlist">
+        <button class="switch" data-sw="extra.books" role="switch"><span class="sw-t">교재 진도<small>할 일 탭에 교재별 강·회독 체크와 D-day 페이스</small></span><span class="sw-k"><i></i></span></button>
+        <button class="switch" data-sw="extra.pva" role="switch"><span class="sw-t">계획 vs 실제<small>할 일에 예상 시간을 적고 실제 공부 시간과 비교</small></span><span class="sw-k"><i></i></span></button>
+        <button class="switch" data-sw="extra.postcard" role="switch"><span class="sw-t">엽서<small>여행지에 도착하면 엽서에 한마디를 남기고, 업적에서 엽서 앨범으로 모아 봐요</small></span><span class="sw-k"><i></i></span></button>
+      </div>
+    </section>
+    <section class="panel" data-page="travel" hidden>
+      <div class="panel-head"><h2>여행</h2></div>
+      <button class="switch" id="tvSwitch" role="switch" aria-checked="false"><span class="sw-t">여행 탭 사용</span><span class="sw-k"><i></i></span></button>
+      <div class="plabel">선택 기능</div>
+      <div class="swlist">
+        <button class="switch" data-topt="via" role="switch"><span class="sw-t">경유 노선<small>먼 곳은 중간 도시를 거쳐 가고, 경유지에서도 도장을 받아요</small></span><span class="sw-k"><i></i></span></button>
+        <button class="switch" data-topt="goal" role="switch"><span class="sw-t">목표 도착일<small>도착 날짜를 정하면 하루에 필요한 공부량을 알려 줘요</small></span><span class="sw-k"><i></i></span></button>
+        <button class="switch" data-topt="ddline" role="switch"><span class="sw-t">D-day 노선<small>D-day까지를 한 줄 노선도로 보여 줘요</small></span><span class="sw-k"><i></i></span></button>
+        <button class="switch" data-topt="season" role="switch"><span class="sw-t">계절 연출<small>봄엔 꽃잎, 가을엔 낙엽, 겨울엔 눈이 날려요</small></span><span class="sw-k"><i></i></span></button>
+        <button class="switch" data-topt="window" role="switch"><span class="sw-t">창밖 풍경<small>이동 중인 표 위로 바깥 풍경이 지나가요</small></span><span class="sw-k"><i></i></span></button>
+        <button class="switch" data-topt="neon" role="switch"><span class="sw-t">밤에는 형광 표<small>다크 모드에서 표가 형광 잉크처럼 빛나요</small></span><span class="sw-k"><i></i></span></button>
+      </div>
+      <div class="plabel">지도 테마 <small class="plus-tag">고지도·야경·위성은 플러스</small></div>
+      <div class="seg mtseg" id="mapTheme"><button data-mt="base">기본</button><button data-mt="old">고지도</button><button data-mt="night">야경</button><button data-mt="sat">위성</button></div>
+      <div class="plabel">티켓 스킨 <small class="plus-tag">플러스</small></div>
+      <div class="skin-grid" id="tkSkin" role="group" aria-label="티켓 스킨"></div>
+      <div class="skin-prev" id="skinPreview" aria-live="polite"></div>
+      <div class="plabel">여권 스타일 <small>국내·세계 공통</small></div>
+      <div class="seg tvstyle" id="tvStyle"><button data-sty="stamp">입국 도장</button><button data-sty="card">수집 카드</button><button data-sty="pass">탑승권</button></div>
+      <ul class="tv-rules">
+        <li>공부 1시간이 <b>10 마일리지</b>, 마일리지 1이 <b>비행 1분</b>이에요.</li>
+        <li>하루에 최대 <b>8시간(80 마일리지)</b>까지 쌓여요.</li>
+        <li>지금까지 공부한 기록도 모두 마일리지에 들어가요.</li>
+        <li>목적지에 도착하면 그 나라에서 다음 여행을 시작해요.</li>
+      </ul>
+      <p class="note">꺼도 여행 기록과 스탬프는 그대로 남아요.</p>
+    </section>
+    <section class="panel" data-page="pip" hidden>
+      <div class="panel-head"><h2>PIP 모드</h2></div>
+      <p class="note">공부 타이머를 작은 창으로 띄워서 다른 앱이나 창을 보면서도 시간을 확인할 수 있어요. 한 번 더 누르면 닫혀요.</p>
+      <button class="pipbtn secondary" id="pipBtn" aria-label="작은 창(PIP)으로 띄우기" title="작은 창(PIP)"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><rect x="2.5" y="4" width="15" height="12" rx="2"/><rect x="10" y="9.5" width="5.5" height="4.5" rx="1" fill="currentColor" stroke="none"/></svg>PIP</button>
+      <p class="note">브라우저나 기기에 따라 PIP를 지원하지 않을 수 있어요.</p>
+    </section>
+    <section class="panel" data-page="theme" hidden>
+      <div class="panel-head"><h2>테마</h2></div>
+      <div class="plabel">화면 모드</div>
+      <div class="seg" id="themeMode"><button data-mode="system" aria-pressed="true">시스템</button><button data-mode="light" aria-pressed="false">라이트</button><button data-mode="dark" aria-pressed="false">다크</button></div>
+      <div class="plabel">공부 시작 방식</div>
+      <div class="seg" id="modeSeg"><button data-m="timer" aria-pressed="true">타이머형</button><button data-m="plan" aria-pressed="false">예약형</button></div>
+      <p class="note">타이머형은 과목을 눌러 바로 재고, 예약형은 시작 시각과 공부 시간을 5분 단위로 정해요.</p>
+      <div class="plabel">포인트 색</div>
+      <div class="accgrid" id="accentList"></div>
+      <div class="theme-icon-preview"><img id="themeIconPreview" src="icons/blue/icon-192.png" width="60" height="60" alt="선택한 색의 앱 아이콘"><span class="note">선택한 포인트 색의 앱 아이콘</span></div>
+      <p class="note">포인트 색은 공부 잔디, 목표 달성률, 중요 표시 같은 강조 부분에 쓰여요. 과목 색은 프리셋 목록에서 따로 정해요.</p>
+    </section>
+    <section class="panel" data-page="week" hidden>
+      <div class="panel-head"><h2>한 주의 시작</h2><span class="note">분석의 '일주일'이 이 요일부터 시작해요</span></div>
+      <div class="seg wkseg" id="weekSeg"></div>
+    </section>
+    <section class="panel" data-page="daystart" hidden>
+      <div class="panel-head"><h2>하루의 시작</h2></div>
+      <div class="wheels one"><div class="wheel" id="wDay" tabindex="0" aria-label="하루의 시작 시각"></div></div>
+      <p class="note" id="dayNote"></p>
+    </section>
+    <section class="panel" data-page="dday" hidden>
+      <div class="panel-head"><h2>D-day</h2></div>
+      <form class="row" id="ddForm">
+        <input class="field grow" id="ddName" type="text" placeholder="예: CPA, CFA, 수능" autocomplete="off">
+        <input class="field" id="ddDate" type="date" required>
+        <button class="primary" type="submit">저장</button>
+        <button class="secondary" type="button" id="ddDel">지우기</button>
+      </form>
+    </section>
+    <section class="panel sub-page" data-page="sub" hidden><div id="subBody"></div></section>
+    <section class="panel legal-page" data-page="privacy" hidden><div class="panel-head"><h2>개인정보 처리방침</h2></div><div class="legal-body" id="privacyBody"></div><a class="textbtn legal-web" href="privacy.html" target="_blank" rel="noopener">웹 페이지로 열기</a></section>
+    <section class="panel legal-page" data-page="terms" hidden><div class="panel-head"><h2>이용약관</h2></div><div class="legal-body" id="termsBody"></div><a class="textbtn legal-web" href="terms.html" target="_blank" rel="noopener">웹 페이지로 열기</a></section>
+    <section class="panel" data-page="challenge" hidden>
+      <div class="panel-head"><h2>주간 챌린지</h2></div>
+      <p class="note">매주 한 나라를 목적지로 정하고, 같은 등급인 사람끼리 일주일 동안 공부 시간으로 겨뤄요. 여행 탭의 '주간'에서 참가할 수 있어요.</p>
+      <div class="row"><button class="secondary" id="wkTourReplay">튜토리얼 다시 보기</button><button class="secondary" id="wkGo">주간 챌린지 열기</button></div>
+    </section>
+    <section class="panel" data-page="reset" hidden>
+      <div class="panel-head"><h2>기록 초기화</h2></div>
+      <div class="danger-zone"><b>처음부터 다시 시작</b><p class="note">공부 기록, 할 일, 과목, 여행 기록을 모두 지우고 처음 상태로 돌아가요. 되돌릴 수 없어요.</p>
+        <button class="del" id="wipeAll">모든 기록 지우기</button></div>
+    </section>
+    <section class="panel" id="exPanel" data-page="ex" hidden>
+      <div class="panel-head"><h2>예시 데이터</h2></div>
+      <div class="row"><span class="note grow">처음 열었을 때 넣어 둔 예시 기록·할 일·반복 할 일을 지워요.</span><button class="secondary" data-clear-ex>예시 지우기</button></div>
+    </section>
+  </div>
+  <aside class="storage-notice" id="storageNotice" role="alert" hidden>
+    <p id="storageMessage"></p><div class="row"><button class="secondary" id="storageRetry">다시 저장</button><button class="secondary" id="storageDownload">현재 기록 내려받기</button><button class="secondary" id="storageOriginal">원본 기록 내려받기</button><button class="secondary" id="storageReload">새로고침</button><button class="secondary" id="storageDismiss">확인</button></div>
+  </aside>
+  <aside class="first-trip-notice panel" id="firstTripNotice" hidden aria-live="polite">
+    <span class="plabel">누적 공부 30분 선물</span><h2>어디든 떠나는 무료 티켓 1장</h2><p>원하는 국내 도시로 최고급 티켓을 타고 즉시 도착해요. 마일리지는 그대로예요.</p><button class="primary" id="firstTripOpen">무료 티켓으로 떠나기</button><small>지금 쓰지 않아도 보관돼요.</small>
+  </aside>
+  <dialog id="syncDialog" class="tour sync-dialog" aria-labelledby="syncTitle">
+    <h2 id="syncTitle">기록이 서로 달라요</h2>
+    <p>기록을 자동으로 합치지 못했어요. 어느 쪽 기록을 남길지 골라 주세요.</p>
+    <div class="sync-opt"><b>이 기기</b><span id="syncLocal"></span></div>
+    <div class="sync-opt"><b>다른 기기 (서버)</b><span id="syncCloud"></span><small id="syncCloudMeta"></small></div>
+    <div class="sync-acts"><button type="button" class="primary" id="syncUseCloud">다른 기기 기록 가져오기</button><button type="button" class="secondary" id="syncUseLocal">이 기기 기록으로 맞추기</button><button type="button" class="secondary" id="syncLater">나중에</button></div>
+  </dialog>
+  <dialog id="forgotDialog" class="tour forgot-dialog" aria-labelledby="forgotTitle">
+    <h2 id="forgotTitle">아직 공부 중인가요?</h2>
+    <p id="forgotText"></p>
+    <div class="forgot-edit" id="forgotEdit" hidden>
+      <label for="forgotEnd">실제로 끝난 시각</label>
+      <input class="field" type="datetime-local" id="forgotEnd" step="60">
+      <p class="err" id="forgotErr" role="alert" hidden></p>
+      <button type="button" class="primary" id="forgotSave">이 시각까지만 기록</button>
+    </div>
+    <div class="forgot-acts"><button type="button" class="primary" id="forgotKeep">계속 공부 중이에요</button><button type="button" class="secondary" id="forgotStop">지금 끝내기</button><button type="button" class="secondary" id="forgotFix">끝난 시각 고치기</button></div>
+  </dialog>
+  <dialog id="wkResult" class="tour wk-result" aria-labelledby="wkResultTitle">
+    <h2 id="wkResultTitle">지난주 챌린지 결과</h2>
+    <div id="wkResultBody"></div>
+    <button type="button" class="primary" id="wkResultOk">확인</button>
+  </dialog>
+  <dialog id="tourDialog" class="tour" aria-labelledby="tourTitle">
+    <div class="tour-top"><span class="tour-k" id="tourKicker"></span><button type="button" class="tour-skip" id="tourSkip">건너뛰기</button></div>
+    <div id="tourCard" class="tour-card">
+    <div class="tour-art" id="tourArt" aria-hidden="true"></div>
+    <h2 id="tourTitle"></h2><p id="tourText"></p><ul class="tour-list" id="tourList"></ul><p class="tour-note" id="tourNote" hidden></p>
+    </div>
+    <div class="tour-dots" id="tourDots" aria-hidden="true"></div>
+    <div class="tour-nav"><button type="button" class="secondary" id="tourBack">이전</button><button type="button" class="primary" id="tourNext" autofocus>다음</button></div>
+  </dialog>
+  <dialog id="firstTripDialog" class="first-trip-dialog" aria-labelledby="firstTripTitle">
+    <h2 id="firstTripTitle">첫 여행은 어디로 떠날까요?</h2><p>목적지 한 곳을 고르면 최고 등급으로 즉시 도착해요.</p>
+    <form id="firstTripForm">
+    <label>출발지<select class="field" id="firstTripOrigin"></select></label><p class="note" id="firstTripOriginNote"></p>
+    <label>목적지 검색<input class="field" id="firstTripSearch" type="search" placeholder="도시 또는 나라 이름"></label>
+    <label>목적지<select class="field" id="firstTripDestination" size="7" required></select></label>
+    <p id="firstTripPreview" role="status"></p><p id="firstTripError" role="alert" hidden></p>
+    <div class="row"><button type="button" class="secondary" id="firstTripLater">나중에 쓰기</button><button type="submit" class="primary" id="firstTripGo">무료로 즉시 도착</button></div></form>
+  </dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+  <div class="arr ck" id="bonusPop" hidden role="dialog" aria-modal="true" aria-label="보너스 마일리지"><div class="ck-box" id="bonusBox"></div></div>
+  <div class="arr ck" id="ckin" hidden role="dialog" aria-modal="true" aria-label="탑승 수속"><div class="ck-box" id="ckBox"></div></div>
+  <div class="arr" id="arrive" hidden role="dialog" aria-modal="true" aria-label="도착"><div class="arr-c"><div class="arr-tk" id="arrTk"></div><div class="arr-msg" id="arrMsg"></div><button class="primary" id="arrOk">확인</button></div></div>
+  <div class="sheet" id="memoSheet" hidden><div class="sheet-c">
+    <b id="memoTitle">무엇을 공부했나요?</b>
+    <input class="field" id="memoText" type="text" maxlength="80" placeholder="예: 통계 심화1 3강, 연습문제 1~10" autocomplete="off" enterkeyhint="done">
+    <div class="sheet-a"><button class="secondary" id="memoSkip">건너뛰기</button><button class="primary" id="memoSave">저장</button></div>
+  </div></div>
+  <div class="modal" id="report" hidden><div class="modal-c" role="dialog" aria-modal="true" aria-labelledby="reportH"><div id="reportBody"></div><button class="primary" id="reportClose">확인</button></div></div>
+</div>
+
+<script src="js/storage.js"></script>
+<script src="js/rewards.js"></script>
+<script src="js/core.js"></script>
+<script src="js/sub-core.js"></script>
+<script src="js/legal.js"></script>
+<script src="js/timer.js"></script>
+<script src="js/planner.js"></script>
+<script src="js/stats.js"></script>
+<script src="js/settings.js"></script>
+<script src="js/travel-world.js"></script>
+<script src="js/kr-routes.js"></script>
+<script src="js/kr-tattoo.js"></script>
+<script src="js/travel-korea.js"></script>
+<script src="js/travel-space.js"></script>
+<script src="js/travel-map.js"></script>
+<script src="js/route-icons.js"></script>
+<script src="js/travel-experience.js"></script>
+<script src="js/ticket-fit.js"></script>
+<script src="js/space-plus.js"></script>
+<script src="js/extras.js"></script>
+<script src="js/multi-add.js"></script>
+<script src="js/subject-picker.js"></script>
+<script src="js/first-trip.js"></script>
+<script src="js/forgot-timer.js"></script>
+<script src="js/today-dest.js"></script>
+<script src="js/subscription.js"></script>
+<script src="js/empty-states.js"></script>
+<script src="js/app.js"></script>
+<script src="js/tutorial.js"></script>
+<script src="js/vendor/supabase.js"></script>
+<script src="js/config.js"></script>
+<script src="js/sync-merge.js"></script>
+<script src="js/sync.js"></script>
+<script src="js/invite.js"></script>
+<script src="js/challenge.js"></script>
+<script src="js/performance.js"></script>
+<script src="js/pwa.js"></script>
+
+
+</body>
+</html>

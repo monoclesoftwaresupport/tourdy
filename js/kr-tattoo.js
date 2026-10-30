@@ -122,4 +122,7 @@ const NC={apple:'#e5484d',tangerine:'#f76707',persimmon:'#f76707',peach:'#f59fb0
 window.krTatInfo=id=>T[id]||null;
 window.krTat=(id,color,stencil)=>{const t=T[id],m=t&&M[t[0]];if(!m)return '';color=NC[t[0]]||color;
   return `<svg class="tat-svg${stencil?' stencil':''}" viewBox="-10 -6 84 76" aria-hidden="true" style="--tk:${color}"><circle class="ring" cx="32" cy="32" r="33"/><g class="ink">${m}</g>${stencil?'':SPK}</svg>`};
+// 기념품 코인 안에 넣을 그림만 (테두리·반짝이 없이)
+window.krTatArt=(id,color)=>{const t=T[id],m=t&&M[t[0]];if(!m)return '';color=NC[t[0]]||color;
+  return `<svg class="tat-svg" viewBox="2 2 60 60" aria-hidden="true" style="--tk:${color}"><g class="ink">${m}</g></svg>`};
 })();
