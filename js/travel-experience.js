@@ -181,7 +181,7 @@ function renderAch(){const T=tr(),K=kr(T),R=RT(),H=T.hid||{},total=K.done.length
     ['세계',[...CONT.map((c,i)=>it(`${c} 첫 도착`,`${c}의 나라에 처음 입국`,gotC.has(i)?1:0,1,INK[i])),it('모든 대륙','일곱 대륙 모두 입국',gotC.size,7,'#c9a227'),
       it('장거리 비행','한 번에 5,000km 이상',T.long?1:0,1,'#2f55c4'),it('지구 한 바퀴','누적 40,075km 이동',Math.round(T.km),40075,'#14806f'),
       it('도장 10개','나라 10곳 입국',wd,10,'#7a3fb0'),it('도장 30개','나라 30곳 입국',wd,30,'#7a3fb0'),it('도장 100개','나라 100곳 입국',wd,100,'#7a3fb0'),it('세계 완주','모든 나라 입국',wd,wt,'#c9a227')]],
-    ['연속 공부',(()=>{const b=passInfo().best;return PASSES.map(q=>it(q[2],`${q[0]}일 연속 공부 · ${q[1]}`,b,q[0],q[5]))})()],
+    ['연속 공부',(()=>{const b=passInfo().best;return PASSES.map(q=>it(q[2],`${q[0]}일 연속 공부`,b,q[0],q[5]))})()],
     ['비밀 목적지',[...SECK.map(x=>it(x[1],x[6],secVisited(K.sec,x[0])?1:0,1,'#6b4fd8')),...SECW.map(x=>it(x[2],x[7],secVisited(T.sec,x[0])?1:0,1,'#6b4fd8'))]],
     ['특별 루트',ROUTES.map(r=>it(r.name,(r.w==='kr'?'국내 · ':'세계 · ')+plName(r.w,r.stops[0])+' 출발',R.done[r.id]?1:0,1,'#c9a227'))]];
   $('achList').innerHTML=groups.map(([g,items])=>`<div class="ach-g"><div class="ach-gh"><b>${g}</b><span>${items.filter(x=>x.ok).length} / ${items.length}</span></div><div class="achs">${items.map(x=>`<div class="ach${x.ok?' ok':''}" style="--k:${x.col}"><span class="ach-i">${x.ok?'★':'☆'}</span><div><b>${x.name}</b><small>${x.desc}</small>${x.goal>1?`<div class="ach-bar"><i style="width:${x.cur/x.goal*100}%"></i></div><small class="ach-n">${x.cur.toLocaleString()} / ${x.goal.toLocaleString()}</small>`:''}</div></div>`).join('')}</div></div>`).join('')
@@ -421,7 +421,7 @@ if(!S.passSeen)S.passSeen=passKeys().map(x=>x.k);
 function pbadge(i,date,sm){const p=PASSES[i];return `<div class="pb${date?'':' lock'}${sm?' sm':''}" style="--a:${p[4]};--b:${p[5]}"><span class="pb-n">${p[0]}</span><small>${p[0]===365?'YEAR':'DAYS'}</small><i></i></div>`}
 function showPass(i){const p=PASSES[i],d=passInfo().first[p[0]];arrTimers.forEach(clearTimeout);arrOpen=true;const el=$('arrive');el.hidden=false;el.classList.add('show-msg');
   $('arrTk').innerHTML=`<div class="bd-big">${pbadge(i,d)}</div>`;
-  $('arrMsg').innerHTML=`<b>${esc(p[2])}</b><span class="bd-desc">${esc(p[3])}</span><div class="bd-cond"><small>획득 조건</small><b>${p[0]}일 연속 공부 · ${p[1]}</b></div><span>${d?ymd(pk(d))+' 획득':'아직 받지 못했어요'}</span>`;$('arrOk').textContent='닫기';vibe()}
+  $('arrMsg').innerHTML=`<b>${esc(p[2])}</b><span class="bd-desc">${esc(p[3])}</span><div class="bd-cond"><small>획득 조건</small><b>${p[0]}일 연속 공부</b></div><span>${d?ymd(pk(d))+' 획득':'아직 받지 못했어요'}</span>`;$('arrOk').textContent='닫기';vibe()}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-pass]');if(b)showPass(+b.dataset.pass)});
 function renderPassCard(){const I=passInfo(),n=I.cur,ti=passTier(n),nx=PASSES[ti+1],p=ti>=0?PASSES[ti]:null,c1=p?p[4]:'#cbd2d9',c2=p?p[5]:'#8a949f';
   $('achPassCard').innerHTML=`<div class="panel-head"><h2>연속 공부 정기권</h2><span class="note">최고 기록 ${I.best}일</span></div>
