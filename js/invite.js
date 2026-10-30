@@ -62,12 +62,14 @@
       ${info&&info.joined?`<p class="note">친구 코드로 ${REWARD} 마일리지를 이미 받았어요.</p>`:`<div class="invite-redeem"><span class="plabel">친구에게 받은 코드</span>
         <div class="row"><input class="field" id="inviteInput" maxlength="6" autocapitalize="characters" autocomplete="off" placeholder="6자리 코드" aria-label="친구 초대 코드"><button class="secondary" id="inviteGo" ${busy?'disabled':''}>받기</button></div>
         <small class="note">가입 후 14일 안에 한 번만 입력할 수 있어요.</small></div>`}
+      ${window.TourdyDemo&&TourdyDemo.on()?'<div class="tv-test"><span>테스트</span><button id="inviteDemo">친구가 내 코드를 입력</button></div>':''}
       ${msg?`<p class="note" role="status">${esc(msg)}</p>`:''}${err?`<p class="err" role="alert">${esc(err)}</p>`:''}`;
   }
   document.addEventListener('click',e=>{
     if(e.target.closest('#inviteShare'))share();
     else if(e.target.closest('#inviteGo'))redeem();
     else if(e.target.closest('#inviteLogin'))openSet('account');
+    else if(e.target.closest('#inviteDemo')&&window.TourdyDemo){TourdyDemo.friendJoined();refresh()}
   });
   document.addEventListener('tourdy:signed-in',refresh);
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh()});

@@ -237,7 +237,7 @@
         <p class="note">이번 주 내 등급은 <b>${esc(ieyo(tname(board.tier)))}</b>. 참가하면 같은 등급의 최대 30명과 한 리그가 돼요.</p>
         <div class="wk-join"><input class="field" id="wkNick" maxlength="12" placeholder="리그에서 쓸 닉네임 (비우면 자동)" aria-label="닉네임"><button class="primary" id="wkJoin" ${joining?'disabled':''}>이번 주 참가하기</button></div>
         ${coopBox}${voteBox()}<details class="wk-more" id="wkRules"${rulesOpen?' open':''}><summary>규칙 보기</summary>${RULES}</details>
-        ${err?`<p class="err" role="alert">${esc(err)}</p>`:''}<h3 class="wk-h">내 챌린지 보상</h3>${collection()}`;
+        ${demoBar()}${err?`<p class="err" role="alert">${esc(err)}</p>`:''}<h3 class="wk-h">내 챌린지 보상</h3>${collection()}`;
     }
     const lands=land.map((n,i)=>{const on=mine>=LANDMARK_H[i]*60;return `<li class="${on?'on':''}"><b>${on?'✓':'🔒'}</b><span>${esc(n)}</span><small>${LANDMARK_H[i]}시간</small></li>`}).join('');
     const rows=board.members||[],myRank=rows.findIndex(r=>r.me)+1,top=Math.max(1,Math.ceil(rows.length*0.1));
@@ -253,8 +253,10 @@
       <span class="plabel">${esc(tname(board.tier))} 리그 순위</span><ol class="wk-board">${table}</ol>${zoneNote}
       ${voteBox()}
       <details class="wk-more" id="wkRules"${rulesOpen?' open':''}><summary>규칙 보기</summary>${RULES}</details>
-      ${err?`<p class="err" role="alert">${esc(err)}</p>`:''}<h3 class="wk-h">내 챌린지 보상</h3>${collection()}`;
+      ${demoBar()}${err?`<p class="err" role="alert">${esc(err)}</p>`:''}<h3 class="wk-h">내 챌린지 보상</h3>${collection()}`;
   }
+  // 아티팩트 테스트 계정일 때만: 월요일 결과 카드·보상을 바로 받아 보기
+  const demoBar=()=>window.TourdyDemo&&TourdyDemo.on()?`<div class="tv-test wk-demo"><span>테스트</span><button data-wkdemo="first">지난주 1등 결과</button><button data-wkdemo="top">상위 10%</button><button data-wkdemo="done">완주만</button><button data-wkdemo="miss">완주 못 함</button><button data-wkdemo="reset">챌린지 초기화</button></div>`:'';
   // 업적 탭: 받은 특별 여권 진열
   function renderAch(){
     const box=$('achWeekly');if(!box)return;
@@ -302,6 +304,9 @@
   }
   document.addEventListener('click',e=>{
     const v=e.target.closest('[data-vote]');if(v){vote(v.dataset.vote);return}
+    const dm=e.target.closest('[data-wkdemo]');if(dm&&window.TourdyDemo){const k=dm.dataset.wkdemo;
+      if(k==='reset'){TourdyDemo.reset();board=null;lastHtml='';load();toast('테스트 챌린지를 처음 상태로 돌렸어요');return}
+      TourdyDemo.lastWeekResult(k);claim().then(()=>{lastHtml='';load()}).catch(()=>{});return}
     if(e.target.closest('#wkJoin'))join();
     else if(e.target.closest('#wkRefresh')){report();loadedAt=0;load()}
     else if(e.target.closest('#wkLogin')){setTab('set');openSet('account')}
