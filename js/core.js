@@ -120,7 +120,7 @@ $('storageOriginal').onclick=()=>{try{const storage=window.TourdyNative?.records
 function saveSoon(ms){clearTimeout(saveSoon.t);saveSoon.t=setTimeout(()=>{saveSoon.t=null;save()},typeof ms==='number'?ms:500)}
 saveSoon.flush=()=>{if(saveSoon.t){clearTimeout(saveSoon.t);saveSoon.t=null;save()}};
 document.addEventListener('visibilitychange',()=>{if(document.hidden)saveSoon.flush()});window.addEventListener('pagehide',()=>saveSoon.flush());
-function save(){clearTimeout(saveSoon.t);saveSoon.t=null;const stored=saveStoredSnapshot();if(typeof bonusCheck==='function'){clearTimeout(save.bt);save.bt=setTimeout(()=>{if(window.TourdyNative?.transactionBusy)return;travelWatch();bonusCheck();if(!S.running)showArrival();renderFirstTripNotice()},400)}if(stored?.then)stored.then(ok=>{if(ok&&window.TourdyNative){const raw=window.TourdyNative.records.storage.getItem(KEY);if(raw)window.TourdyNative.saved(JSON.parse(raw));}});return stored}
+function save(){clearTimeout(saveSoon.t);saveSoon.t=null;const stored=saveStoredSnapshot();if(typeof bonusCheck==='function'){clearTimeout(save.bt);save.bt=setTimeout(()=>{if(window.TourdyNative?.transactionBusy)return;travelWatch();bonusCheck();showArrival();renderFirstTripNotice()},400)}if(stored?.then)stored.then(ok=>{if(ok&&window.TourdyNative){const raw=window.TourdyNative.records.storage.getItem(KEY);if(raw)window.TourdyNative.saved(JSON.parse(raw));}});return stored}
 let S=load();
 TourdyRewards.initialize(S);
 // A valid source is written only after an actual change; damaged input is never seeded over.

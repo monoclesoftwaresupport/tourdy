@@ -3,7 +3,8 @@ document.body.appendChild($('arrive'));document.body.appendChild($('ckin'));docu
 const ARQ=[];let arrOpen=false,arrTimers=[];
 function arrQ(x){x.d=dk(today0());ARQ.push(x);window.ARR_T=Date.now();setTimeout(showArrival,60)}
 const ymd=d=>`${d.getFullYear()}.${pad(d.getMonth()+1)}.${pad(d.getDate())}`;
-function showArrival(){if(arrOpen||!ARQ.length||S.running)return;const x=ARQ.shift();if(x.w==='space')return spArrival(x);if(x.w==='kr'?!(KRM[x.f]&&KRM[x.t]):!(NAT[x.f]&&NAT[x.t]))return showArrival();
+function showArrival(){if(arrOpen||!ARQ.length)return; // 공부 중에도 도착 연출을 바로 보여 준다
+const x=ARQ.shift();if(x.w==='space')return spArrival(x);if(x.w==='kr'?!(KRM[x.f]&&KRM[x.t]):!(NAT[x.f]&&NAT[x.t]))return showArrival();
   arrOpen=true;const el=$('arrive');el.classList.remove('show-msg');el.hidden=false;let snd;
   if(x.w==='kr'){const B=KRM[x.t],gi=krGroup(B)-1,dt=pk(x.d);snd=krMode(x.f,x.t);if(snd==='air')snd='plane';$('arrTk').innerHTML=krTicket(x.f,x.t,{done:1,d:x.d,gold:x.gold,cls:x.cls,free:x.free});
     $('arrMsg').innerHTML=`<span class="ks-stamp arr-stamp${x.cls?' gold':''}" style="--k:${KINK[gi]};--c:color-mix(in srgb,${KINK[gi]} 78%,var(--ink));--r:-8deg"><small>${B[2]}</small><b>${B[1].replace(/\(.+\)/,'')}</b><small>${pad(dt.getMonth()+1)}.${pad(dt.getDate())}</small></span><b>${B[1]} 도착!</b><span>지역 도장을 받았어요</span>`}

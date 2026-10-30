@@ -150,8 +150,12 @@ function krItems(all){const T=tr(),K=kr(T),sty=T.style||'stamp',DD=Object.fromEn
   if(sty==='pass'){const rows=all.filter(x=>DD[x[0]]).map(x=>{const i=K.path.indexOf(x[0]),f=i>0?K.path[i-1]:K.home,e=DD[x[0]];if(!KRM[f])return '';
       return `<div class="tpass kpass${tc(e.tier)}" role="button" tabindex="0" data-tix="${x[0]}"><div class="tp-m"><span class="tp-k">${krClass(f,x[0])} · ${ymd(pk(e.d))}</span><div class="tp-r">${KRM[f][1]} ${krIcon(krMode(f,x[0]))} ${x[1]}</div><small>${KRM[f][2]} → ${x[2]}</small></div><div class="tp-s"><small>운임</small><b>${krCost(f,x[0])}</b></div></div>`}).join('');
     return `<div class="stamps sty-pass wgrid">${rows||'<p class="empty">이 지역에 다녀온 기록이 없어요</p>'}</div>`}
-  if(sty==='card')return `<div class="stamps sty-card wgrid">${all.map(x=>{const e=DD[x[0]],nm=x[1].replace(/\(.+\)/,'');if(!e)return `<span class="ccard wslot2"><b>${nm}</b><small>${x[2]}</small></span>`;
-      return `<button class="ccard${tc(e.tier)}" data-tix="${x[0]}" aria-label="${x[1]} 승차권 보기"><span class="cf kcf">${nm.slice(0,1)}</span><b>${nm}</b><small>${x[2]}</small><span class="cd2">${ymd(pk(e.d))}</span></button>`}).join('')}</div>`;
+  if(sty==='card')return `<div class="stamps sty-card wgrid">${all.map(x=>{const e=DD[x[0]],nm=x[1].replace(/\(.+\)/,'');const ti=window.krTatInfo&&krTatInfo(x[0]),ink=KINK[Math.max(0,krGroup(x)-1)];
+      if(!ti){if(!e)return `<span class="ccard wslot2"><b>${nm}</b><small>${x[2]}</small></span>`;
+        return `<button class="ccard${tc(e.tier)}" data-tix="${x[0]}" aria-label="${x[1]} 승차권 보기"><span class="cf kcf">${nm.slice(0,1)}</span><b>${nm}</b><small>${x[2]}</small><span class="cd2">${ymd(pk(e.d))}</span></button>`}
+      // 수집 카드: 지역 특산물·관광지를 플래시 타투처럼 새긴다 (안 간 곳은 밑그림만)
+      if(!e)return `<span class="ccard tat wslot2" aria-label="${x[1]} · 아직 안 감"><span class="tat-art">${krTat(x[0],ink,1)}</span><b>${nm}</b><small>${x[2]}</small></span>`;
+      return `<button class="ccard tat${tc(e.tier)}" data-tix="${x[0]}" aria-label="${x[1]} ${ti[1]} 카드 · 승차권 보기"><span class="tat-art">${krTat(x[0],ink)}</span><span class="tat-rb"><i>${ti[1]}</i></span><b>${nm}</b><small>${x[2]}</small><span class="cd2">${ymd(pk(e.d))}</span></button>`}).join('')}</div>`;
   return `<div class="ks-grid">${all.map(x=>{const e=DD[x[0]];if(!e)return `<span class="ks-slot"><i>${x[1].replace(/\(.+\)/,'')}</i></span>`;const dt=pk(e.d);
     return `<button class="ks-stamp${tc(e.tier)}" data-tix="${x[0]}" aria-label="${x[1]} 승차권 보기" style="--r:${(hh(x[0])%17)-8}deg"><small>${x[2]}</small><b>${x[1].replace(/\(.+\)/,'')}</b><small>${pad(dt.getMonth()+1)}.${pad(dt.getDate())}</small></button>`}).join('')}</div>`}
 $('krStamps').addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.matches('[data-tix]')){e.preventDefault();e.target.click()}});

@@ -2090,3 +2090,40 @@ button.spm-n{cursor:pointer}button.spm-n:hover{opacity:1}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .login-apple{background:#fff;color:#000;border-color:#fff}}
 .login-apple svg{width:20px;height:20px;margin-top:-2px}
 
+
+/* 프리셋 색 고르기: 티켓 스킨용 .sw 규칙이 덮어써서 가로로 넓어지던 문제 → 동그라미로 고정 */
+.swatches .sw{display:block;flex:none;width:28px;height:28px;padding:0;border:0;border-radius:50%;overflow:visible;grid-template-columns:none;background:var(--c);box-shadow:0 0 0 1px var(--line);cursor:pointer}
+.swatches .sw[aria-pressed="true"]{box-shadow:0 0 0 2px var(--bg),0 0 0 4px var(--ink)}
+.swatches .sw.custom{position:relative;background:conic-gradient(#E5484D,#E2A400,#30A46C,#0090FF,#8E4EC6,#E5484D)}
+
+/* 탑승권 스타일 여권: 한글이 Plex Mono에 없어 시스템 글꼴로 섞여 보이던 문제 → 앱 기본 글꼴로 통일 */
+.tpass,.tpass .tp-k,.tpass .tp-r,.tpass .tp-s b,.tpass small{font-family:var(--sans);font-variant-numeric:tabular-nums}
+.tpass .tp-k{letter-spacing:.04em}
+.tpass .tp-r{font-weight:700;letter-spacing:-.01em}
+.tpass .tp-s b{font-weight:700}
+
+/* 지역 도장 · 수집 카드 = 플래시 타투 */
+.ccard.tat{--paper:var(--hover);align-items:center;text-align:center;gap:1px;padding:12px 10px 12px}
+.ccard.tat.silver{--paper:#eef1f4}.ccard.tat.gold{--paper:#fbedb8}
+.tat-art{display:block;width:100px;height:90px;margin:-2px 0 -6px}
+.tat-svg{width:100%;height:100%;overflow:visible;color:inherit}
+.tat-svg .ink{fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.tat-svg .f{fill:color-mix(in srgb,var(--tk) 82%,var(--paper))}
+.tat-svg .w{fill:var(--paper)}
+.tat-svg .k{fill:currentColor}
+.tat-svg .ring{fill:none;stroke:color-mix(in srgb,var(--tk) 55%,transparent);stroke-width:1.6;stroke-dasharray:0 5;stroke-linecap:round}
+.tat-svg .sp{fill:var(--tk);stroke:none}
+.ccard.tat.gold .tat-svg .ring,.ccard.tat.silver .tat-svg .ring{stroke:currentColor;opacity:.45}
+.tat-rb{position:relative;z-index:1;display:inline-block;max-width:100%;background:currentColor;padding:2px 13px;margin-bottom:5px;clip-path:polygon(0 0,100% 0,calc(100% - 7px) 50%,100% 100%,0 100%,7px 50%)}
+.tat-rb i{display:block;font-style:normal;font-family:var(--serif);font-weight:900;font-size:11px;letter-spacing:.02em;line-height:1.5;color:var(--paper);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ccard.tat b{font-size:15px}
+.ccard.tat .cd2{margin-top:2px}
+button.ccard.tat{text-align:center}
+button.ccard.tat .tat-svg{transition:transform .25s ease}
+@media (hover:hover){button.ccard.tat:hover .tat-svg{transform:rotate(-4deg) scale(1.04)}}
+.ccard.tat.wslot2{--paper:var(--bg)}
+.tat-svg.stencil{color:var(--faint);opacity:.55}
+.tat-svg.stencil .ink{stroke-width:1.4;stroke-dasharray:3 3}
+.tat-svg.stencil .f,.tat-svg.stencil .k{fill:none}
+.tat-svg.stencil .w{fill:none}
+.tat-svg.stencil .ring{stroke:var(--line)}
