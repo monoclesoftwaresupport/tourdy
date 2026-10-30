@@ -2084,3 +2084,9 @@ button.spm-n{cursor:pointer}button.spm-n:hover{opacity:1}
 .ps-months i[style*="--h:0.0%"]{display:none} /* 0시간인 달은 막대 없이 숫자만 */
 .ps-empty{margin:0;padding:18px 12px;border-radius:12px;background:var(--hover);font-size:13px;color:var(--muted);text-align:center;line-height:1.5}
 .ps-empty{white-space:nowrap;overflow:hidden;text-overflow:ellipsis} /* 안내 문구는 한 줄로 */
+/* Apple로 계속하기: Apple 디자인 가이드에 맞춘 검은 버튼 (다크 모드에서는 흰 버튼) */
+.login-apple{background:#000;color:#fff;border-color:#000}
+:root[data-theme="dark"] .login-apple{background:#fff;color:#000;border-color:#fff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .login-apple{background:#fff;color:#000;border-color:#fff}}
+.login-apple svg{width:20px;height:20px;margin-top:-2px}
+

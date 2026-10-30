@@ -9,7 +9,8 @@
   const native=!!window.TourdyNative;
   const DEVICE=native?'iOS 앱':/android/i.test(navigator.userAgent)?'안드로이드':/iphone|ipad/i.test(navigator.userAgent)?'iOS 웹':'웹';
   const META='tourdy.sync.v1',BASE='tourdy.sync.base.v1',EDIT='tourdy.sync.edit.v1';
-  const PROVIDERS=[['kakao','카카오'],['google','Google'],['github','GitHub']];
+  // Apple 로그인은 앱스토어 심사 기준(소셜 로그인이 있으면 Apple 로그인도 제공)에 따라 맨 위에 둔다
+  const PROVIDERS=[['apple','Apple'],['kakao','카카오'],['google','Google'],['github','GitHub']];
   let authBusy=false;
   let sb=null,session=null,busy=false,pushTimer=null,applying=false,conflictRow=null,lastError='',armDelete=false;
   let live=null,retryTimer=null,retryDelay=0;
@@ -30,7 +31,8 @@
   const summary=st=>{const ss=(st.sessions||[]).filter(x=>x.kind==='study'&&!x.ex);const ms=ss.reduce((a,x)=>a+(x.end-x.start),0);
     const T=st.travel||{},K=T.kr||{},subs=(st.subjects||[]).filter(x=>!x.deleted).map(x=>x.name);
     return `공부 ${ss.length}회 · ${fmtH(ms)} · 도장 ${((K.done||[]).length)+((T.stamps||[]).length)}개\n과목 ${subs.length}개: ${subs.slice(0,6).join(', ')}${subs.length>6?' 외':''}`};
-  const userName=u=>{const m=(u&&u.user_metadata)||{};return m.full_name||m.name||m.nickname||m.user_name||m.preferred_username||(u&&u.email)||'투어디 사용자'};
+  // Apple은 이름을 처음 한 번만 주고, 이메일을 가린 주소(privaterelay)로 줄 수 있어서 가린 주소는 이름으로 쓰지 않는다
+  const userName=u=>{const m=(u&&u.user_metadata)||{},e=u&&u.email&&!/privaterelay\.appleid\.com$/i.test(u.email)?u.email:'';return m.full_name||m.name||m.nickname||m.user_name||m.preferred_username||e||'투어디 사용자'};
   const providerName=u=>{const p=u&&u.app_metadata&&u.app_metadata.provider;return (PROVIDERS.find(x=>x[0]===p)||[0,p||''])[1]};
   const setStatus=t=>{lastError=t||'';renderAccountIfOpen()};
 
@@ -40,7 +42,9 @@
     authBusy=true;lastError='';renderAccountIfOpen();
     try{
       if(native){
-        if(provider==='google'||provider==='kakao'){
+        // 아이폰 앱: Apple은 앱이 기본 로그인 창(Sign in with Apple)을 지원하면 그걸 쓰고, 아니면 아래 웹 로그인 창으로 진행
+        const nativeApple=provider==='apple'&&window.TourdyNative.socialSignIn&&window.TourdyNative.supportsAppleSignIn;
+        if(provider==='google'||provider==='kakao'||nativeApple){
           if(!window.TourdyNative.socialSignIn)throw Error('앱을 최신 버전으로 업데이트해 주세요.');
           const identity=await window.TourdyNative.socialSignIn(provider);
           if(identity.provider!==provider||!identity.idToken||!identity.nonce)throw Error('인증 결과를 확인하지 못했어요.');
@@ -224,6 +228,7 @@
   }
   function renderAccountIfOpen(){if(typeof setPage!=='undefined'&&setPage==='account'&&tab==='set')renderAccount();if(typeof renderSet==='function'&&tab==='set'&&!setPage)renderSet()}
   const LOGIN_ICON={
+    apple:'<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M16.37 12.6c-.02-2.2 1.8-3.26 1.88-3.31-1.03-1.5-2.62-1.7-3.18-1.73-1.35-.14-2.64.8-3.33.8-.69 0-1.74-.78-2.87-.76-1.47.02-2.83.86-3.59 2.18-1.53 2.66-.39 6.6 1.1 8.76.73 1.06 1.6 2.24 2.73 2.2 1.1-.05 1.51-.71 2.84-.71 1.32 0 1.7.71 2.86.69 1.18-.02 1.93-1.07 2.65-2.13.84-1.22 1.18-2.41 1.2-2.47-.03-.01-2.3-.88-2.32-3.52zM14.2 6.13c.6-.73 1.01-1.75.9-2.76-.87.04-1.92.58-2.54 1.31-.56.64-1.05 1.68-.92 2.67.97.08 1.96-.49 2.56-1.22z"/></svg>',
     google:'<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.5 12.3c0-.8-.1-1.5-.2-2.3H12v4.3h5.9a5 5 0 0 1-2.2 3.3v2.7h3.5c2.1-1.9 3.3-4.7 3.3-8z"/><path fill="#34A853" d="M12 23c3 0 5.5-1 7.2-2.7l-3.5-2.7c-1 .7-2.2 1.1-3.7 1.1-2.9 0-5.3-1.9-6.2-4.5H2.2v2.8A11 11 0 0 0 12 23z"/><path fill="#FBBC05" d="M5.8 14.2a6.6 6.6 0 0 1 0-4.3V7.1H2.2a11 11 0 0 0 0 9.9z"/><path fill="#EA4335" d="M12 5.4c1.6 0 3.1.6 4.2 1.7l3.1-3.1A11 11 0 0 0 2.2 7.1l3.6 2.8C6.7 7.3 9.1 5.4 12 5.4z"/></svg>',
     github:'<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 1.5a10.5 10.5 0 0 0-3.3 20.5c.5.1.7-.2.7-.5v-1.8c-2.9.6-3.5-1.4-3.5-1.4-.5-1.2-1.2-1.5-1.2-1.5-.9-.6.1-.6.1-.6 1 .1 1.6 1.1 1.6 1.1.9 1.6 2.5 1.1 3.1.9.1-.7.4-1.1.7-1.4-2.3-.3-4.8-1.2-4.8-5.2 0-1.1.4-2.1 1.1-2.8-.1-.3-.5-1.4.1-2.8 0 0 .9-.3 2.9 1.1a9.9 9.9 0 0 1 5.2 0c2-1.4 2.9-1.1 2.9-1.1.6 1.4.2 2.5.1 2.8.7.7 1.1 1.7 1.1 2.8 0 4-2.5 4.9-4.8 5.2.4.3.7 1 .7 2v3c0 .3.2.6.7.5A10.5 10.5 0 0 0 12 1.5z"/></svg>',
     kakao:'<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#191919" d="M12 3.5c-5.2 0-9.5 3.3-9.5 7.4 0 2.6 1.7 4.9 4.3 6.2l-1.1 4c-.1.3.3.6.6.4l4.7-3.1c.3 0 .7.1 1 .1 5.2 0 9.5-3.3 9.5-7.5S17.2 3.5 12 3.5z"/></svg>'
