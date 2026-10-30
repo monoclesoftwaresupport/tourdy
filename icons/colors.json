@@ -17,6 +17,12 @@
     "inner": "#F89293",
     "background": "#0E1526"
   },
+  "coral": {
+    "name": "코랄",
+    "outer": "#FF6954",
+    "inner": "#FFACA1",
+    "background": "#0E1526"
+  },
   "yellow": {
     "name": "노랑",
     "outer": "#F3B800",

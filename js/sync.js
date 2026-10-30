@@ -50,6 +50,8 @@
           if(identity.provider!==provider||!identity.idToken||!identity.nonce)throw Error('인증 결과를 확인하지 못했어요.');
           const {error}=await sb.auth.signInWithIdToken({provider,token:identity.idToken,access_token:identity.accessToken,nonce:identity.nonce});
           if(error)throw error;
+          // Apple은 이름을 첫 로그인 때 한 번만 알려 주므로 그때 계정에 저장해 둔다
+          if(provider==='apple'&&identity.fullName)sb.auth.updateUser({data:{full_name:identity.fullName}}).catch(()=>{});
           return;
         }
         const {data,error}=await sb.auth.signInWithOAuth({provider,options:{redirectTo:CFG.nativeScheme+'://auth-callback',skipBrowserRedirect:true}});

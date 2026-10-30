@@ -19,6 +19,7 @@
 | 파랑 | blue/ | #3B86FC | #93BCFD |
 | 주황 | orange/ | #F4682A | #F9AC8A |
 | 빨강 | red/ | #F2393B | #F89293 |
+| 코랄 | coral/ | #FF6954 | #FFACA1 |
 | 노랑 | yellow/ | #F3B800 | #F8D873 |
 | 라임 | lime/ | #8CC825 | #C0E187 |
 | 초록 | green/ | #0FB85C | #7BD8A5 |
