@@ -229,9 +229,14 @@
     if(!board){if(!err)setTimeout(load,0);return `<div class="panel-head"><h2>주간 챌린지</h2></div><p class="note" role="status">${err?esc(err):'불러오는 중…'}</p>`}
     const c=board.country,land=(C[c]||['',[]])[1],mine=board.my_minutes||0,coop=board.coop||{minutes:0,goal:1,participants:0};
     const head=`<div class="wk-head">${flag(c)}<div><small>이번 주 목적지 · ${esc(left(board.ends_at))}</small><b>${esc(cname(c))}</b><span class="wk-going">${coop.participants}명이 함께 ${esc(ro(cname(c)))} 떠났어요</span></div><span class="wk-tier wk-t${board.tier|0}">${esc(tname(board.tier))}</span></div>`;
-    const coopPct=Math.min(100,Math.round(coop.minutes/Math.max(1,coop.goal)*100));
-    const coopBox=`<div class="wk-coop"><span class="plabel">리그 협동 목표</span><div class="wk-bar"><i style="width:${coopPct}%"></i></div>
-      <small>${hm(coop.minutes)} / ${hm(coop.goal)} (${coopPct}%) · 달성하면 이번 주 ${hm(COOP_MIN)} 이상 공부한 사람 모두 협동 스탬프와 ${mi(REWARD.coop)}</small></div>`;
+    const coopPct=Math.min(100,Math.round(coop.minutes/Math.max(1,coop.goal)*100)),coopDone=coop.minutes>=coop.goal,eligible=mine>=COOP_MIN;
+    const coopBox=`<div class="wk-coop${coopDone?' done':''}">
+      <div class="wkc-h"><span class="plabel">리그 협동 목표</span><em>${coopDone?'달성!':coopPct+'%'}</em></div>
+      <div class="wkc-num"><b>${hm(coop.minutes)}</b><span>/ ${hm(coop.goal)}</span></div>
+      <div class="wk-bar wkc-bar"><i style="width:${coopPct}%"></i></div>
+      <div class="wkc-meta"><span>리그 ${coop.participants}명이 함께 채우는 중</span><span>${coopDone?'목표를 채웠어요':`${hm(coop.goal-coop.minutes)} 남음`}</span></div>
+      <div class="wkc-reward${board.joined&&eligible?' ok':''}"><b>보상</b><span>이번 주 ${hm(COOP_MIN)} 이상 공부한 사람 모두 · 협동 스탬프 + ${mi(REWARD.coop)}</span>
+        ${board.joined?`<small>${eligible?'내 공부 시간은 기준을 넘었어요 ✓':`내 공부 ${hm(mine)} / ${hm(COOP_MIN)} · ${hm(COOP_MIN-mine)} 더 하면 받을 수 있어요`}</small>`:''}</div></div>`;
     if(!board.joined){
       return `<div class="panel-head"><h2>주간 챌린지</h2></div>${head}
         <p class="note">이번 주 내 등급은 <b>${esc(ieyo(tname(board.tier)))}</b>. 참가하면 같은 등급의 최대 30명과 한 리그가 돼요.</p>

@@ -1703,7 +1703,16 @@ body.tour-active>:not(#tourDialog){pointer-events:none!important}
 .wk-lands{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
 .wk-lands li{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:12px;background:var(--hover);color:var(--faint)}
 .wk-lands li.on{color:var(--ink);background:var(--accent-soft)}.wk-lands li span{flex:1;font-size:13.5px}.wk-lands li small{font-size:11.5px;color:var(--muted)}
-.wk-coop{display:flex;flex-direction:column;gap:6px}.wk-coop small{color:var(--muted);font-size:12.5px;line-height:1.5}
+.wk-coop{display:flex;flex-direction:column;gap:10px;padding:16px;border-radius:16px;background:var(--hover)}
+.wkc-h{display:flex;align-items:center;justify-content:space-between}.wkc-h .plabel{margin:0}
+.wkc-h em{font-style:normal;font-weight:800;font-size:15px;color:var(--accent);font-variant-numeric:tabular-nums}
+.wkc-num{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}.wkc-num b{font-size:30px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.wkc-num span{font-size:16px;font-weight:600;color:var(--muted);font-variant-numeric:tabular-nums}
+.wk-bar.wkc-bar{height:16px;background:var(--surface)}
+.wkc-meta{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+.wkc-reward{display:flex;flex-direction:column;gap:3px;padding:10px 12px;border-radius:12px;background:var(--surface);font-size:13.5px;line-height:1.5}
+.wkc-reward b{font-size:12px;color:var(--accent)}.wkc-reward small{color:var(--muted);font-size:12.5px}.wkc-reward.ok small{color:var(--accent);font-weight:700}
+.wk-coop.done .wkc-h em{color:#16b85e}.wk-coop.done .wkc-bar i{background:linear-gradient(90deg,var(--accent),#16b85e)}
 .wk-bar{height:10px;border-radius:99px;background:var(--track);overflow:hidden}.wk-bar i{display:block;height:100%;background:var(--accent);border-radius:99px}
 .wk-board{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
 .wk-board li{display:flex;align-items:center;gap:10px;padding:9px 4px;border-bottom:1px solid var(--line);font-size:14px}
