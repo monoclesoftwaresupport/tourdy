@@ -98,8 +98,14 @@ document.addEventListener('keydown',e=>{const card=e.target.closest('[data-rtgo]
 document.addEventListener('click',e=>{const g=e.target.closest('[data-rtgo]');if(g)startRoute(g.dataset.rtgo)});
 /* ---------- 경유 (선택) ---------- */
 function pickViaKr(a,b){const L=krRoute(a,b);if(L.length>1&&L[0].t!==a&&L[0].t!==b)return L[0].t; // 환승이 있으면 표에 적힌 첫 환승 도시에 들름
+  // 배·비행기로 바로 가는 구간은 들를 곳이 없다 (예: 인천→백령도는 배 한 번. 예전엔 지도상 가까운 강화를 경유지로 골라 인천↔강화를 반복했음)
+  if(L.length===1&&(L[0].m==='ship'||L[0].m==='air'))return null;
   const d=krKm(a,b);if(d<150)return null;let best=null,bs=-1;
-  KR.forEach(x=>{const c=x[0];if(c===a||c===b)return;const l1=krKm(a,c),l2=krKm(c,b);if(l1+l2>d*1.12)return;const sc=Math.min(l1,l2)-(krDone(kr(tr()),c)?15:0);if(sc>bs){bs=sc;best=c}});return best}
+  KR.forEach(x=>{const c=x[0];if(c===a||c===b)return;const l1=krKm(a,c),l2=krKm(c,b);if(l1+l2>d*1.12)return;if(krRoute(c,b).some(l=>l.t===a))return; // 경유지에서 목적지로 가는 길이 지금 도시를 다시 지나면 제외
+    const sc=Math.min(l1,l2)-(krDone(kr(tr()),c)?15:0);if(sc>bs){bs=sc;best=c}});return best}
+// 이미 반복에 빠진 여행 바로잡기: 다음 경유지에서 최종 목적지로 가는 길이 지금 도시를 다시 지나면, 다음 구간을 새로 고른다 (마일리지는 도착할 때 내므로 손해 없음)
+setTimeout(()=>{try{const T=tr(),K=kr(T);if(!K.final||!K.to||K.to===K.final||!KRM[K.at]||!KRM[K.to]||!KRM[K.final])return;
+  if(!krRoute(K.to,K.final).some(l=>l.t===K.at))return;const nx=pickViaKr(K.at,K.final);K.to=nx&&nx!==K.at?nx:K.final;if(K.to===K.final)K.final=null;save();if(typeof renderTravel==='function'&&tab==='travel')renderTravel()}catch(e){}},0);
 const HUBS=['AE','QA','TR','SG','DE','NL','GB','FR','US','JP','CN','TH','ZA','ET','BR','AU','IN','CA','MX','KE','EG','ES','PA','CL'];
 function pickViaW(a,b){const d=kmBetween(a,b);if(d<7000)return null;let best=null,bs=-1;
   HUBS.forEach(c=>{if(c===a||c===b||!NAT[c])return;const l1=kmBetween(a,c),l2=kmBetween(c,b);if(l1+l2>d*1.15)return;const sc=Math.min(l1,l2);if(sc>bs){bs=sc;best=c}});return best}
