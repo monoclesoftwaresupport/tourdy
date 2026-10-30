@@ -2081,3 +2081,5 @@ button.spm-n{cursor:pointer}button.spm-n:hover{opacity:1}
 .empty-hero b{font-size:18px;font-weight:800;text-wrap:balance}.empty-hero span{font-size:14px;color:var(--muted);line-height:1.55;max-width:32ch}
 .empty-hero .primary{margin-top:6px}
 .kr-empty{margin:0 0 10px;padding:12px 14px;border-radius:12px;background:var(--hover);font-size:13px;color:var(--muted);line-height:1.5}
+.ps-months i[style*="--h:0.0%"]{display:none} /* 0시간인 달은 막대 없이 숫자만 */
+.ps-empty{margin:0;padding:18px 12px;border-radius:12px;background:var(--hover);font-size:13px;color:var(--muted);text-align:center;line-height:1.5}
