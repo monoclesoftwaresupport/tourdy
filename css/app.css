@@ -2060,3 +2060,24 @@ button.spm-n{cursor:pointer}button.spm-n:hover{opacity:1}
 .sw.sw-base i:first-child{background:#f4f8ff;border-top:4px solid #1d6fd8}.sw.sw-base i:last-child{background:#1d6fd8}
 .sw.sw-vintage i:first-child{background:#efe0b9}.sw.sw-vintage i:last-child{background:#9b7b55}
 #achPassCard .tcard{margin-inline:auto} /* 정기권 카드 가운데 정렬 */
+/* 구독 관리 · 약관 */
+.plus-restore{align-self:center;font-size:13px}
+.plus-legal{display:flex;justify-content:center;align-items:center;gap:6px;margin:0;font-size:12px;color:var(--faint)}.plus-legal .textbtn{font-size:12px;color:var(--muted);padding:2px}
+.plus-manage-box{display:flex;flex-direction:column;gap:12px;padding:16px;border-radius:16px;background:var(--hover)}
+.pm-h{display:flex;justify-content:space-between;align-items:baseline}.pm-h b{font-size:16px;font-weight:800}.pm-h small{font-size:11px;font-weight:700;color:#a07c12}
+.pm-dl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:0}
+.pm-dl div{background:var(--surface);border-radius:12px;padding:10px 12px;min-width:0}.pm-dl dt{font-size:11px;font-weight:700;color:var(--muted)}.pm-dl dd{margin:2px 0 0;font-size:14px;font-weight:800;font-variant-numeric:tabular-nums}
+.pm-acts{display:flex;flex-direction:column;gap:8px}.plus-manage{display:flex;justify-content:center;align-items:center;padding:12px;border-radius:12px;text-decoration:none;font-weight:700}
+.plus-manage-box .note{margin:0;line-height:1.6}
+.pm-row{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.legal-body{font-size:14px;line-height:1.7;color:var(--ink)}
+.legal-body .lg-sec h3{font-size:15px;margin:20px 0 4px}.legal-body .lg-sec:first-child h3{margin-top:4px}
+.legal-body ul{padding-left:20px;margin:6px 0}.legal-body li{margin:2px 0}
+.legal-body .lg-table{overflow-x:auto;margin:8px 0}.legal-body table{border-collapse:collapse;min-width:520px;font-size:12.5px}.legal-body th,.legal-body td{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+.legal-web{display:inline-block;margin-top:14px;font-size:13px;color:var(--accent)}
+/* 빈 상태 */
+.empty-hero{display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;padding:22px 18px}
+.empty-hero svg{width:44px;height:44px;color:var(--accent)}
+.empty-hero b{font-size:18px;font-weight:800;text-wrap:balance}.empty-hero span{font-size:14px;color:var(--muted);line-height:1.55;max-width:32ch}
+.empty-hero .primary{margin-top:6px}
+.kr-empty{margin:0 0 10px;padding:12px 14px;border-radius:12px;background:var(--hover);font-size:13px;color:var(--muted);line-height:1.5}

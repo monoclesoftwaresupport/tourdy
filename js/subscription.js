@@ -39,15 +39,32 @@
     $('subBody').innerHTML=`<div class="plus-hero${on?' on':''}"><span class="plus-k">${STAR}TOURDY PLUS</span><b>${on?'투어디 플러스 구독 중':'더 멀리, 더 빨리 떠나요'}</b>
         <span>${on?`${since.replace(/-/g,'.')}부터 · 오늘 공부는 1.5배로 쌓이고 있어요`:'공부한 시간이 1.5배 마일리지가 되고, 모든 기기에서 이어져요'}</span></div>
       <ul class="plus-ben">${BEN.map(([k,t,d,f])=>`<li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICON[k]}</svg><div><b>${t}</b><span>${d}</span><small>무료: ${f}</small></div></li>`).join('')}</ul>
-      ${on?`<div class="plus-acts"><p class="note">해지해도 이미 받은 마일리지와 도장은 그대로예요. 다음 결제일부터 무료로 바뀌어요.</p>${isTest()?'<button class="secondary" data-subtest>테스트: 구독 끄기</button>':''}</div>`
-      :`<div class="plus-price"><button class="plus-plan on" data-plan="y"><small>연간 · 25% 할인</small><b>${SUB_PRICE.y}<em>/년</em></b><span>월 $3 꼴</span></button><button class="plus-plan" data-plan="m"><small>월간</small><b>${SUB_PRICE.m}<em>/월</em></b><span>언제든 해지</span></button></div>
+      ${on?manageHTML():`<div class="plus-price"><button class="plus-plan${plan==='y'?' on':''}" data-plan="y"><small>연간 · 25% 할인</small><b>${SUB_PRICE.y}<em>/년</em></b><span>월 $3 꼴</span></button><button class="plus-plan${plan==='m'?' on':''}" data-plan="m"><small>월간</small><b>${SUB_PRICE.m}<em>/월</em></b><span>언제든 해지</span></button></div>
         <button class="primary plus-go" data-subtrial>7일 무료로 시작하기</button>
-        <p class="note">무료 체험이 끝나면 고른 요금제로 결제돼요. 체험 중에 해지하면 결제되지 않아요.${isTest()?'':' 결제는 스토어 출시 때 연결돼요.'}</p>
+        <p class="note">7일 무료 체험이 끝나면 고른 요금제로 자동 결제되고, 해지할 때까지 같은 주기로 갱신돼요. 체험이 끝나기 24시간 전까지 해지하면 결제되지 않아요.${isTest()?'':' 결제는 스토어 출시 때 연결돼요.'}</p>
+        <button class="textbtn plus-restore" data-subrestore>구매 복원</button>
         ${isTest()?'<button class="secondary" data-subtest>테스트: 결제 없이 구독 켜기</button>':''}`}
       ${restRow()}
-      <p class="note plus-fair">순위·주간 챌린지는 마일리지가 아니라 실제 공부 시간으로 매겨서 구독 여부와 상관없이 공평해요.</p>`;
+      <p class="note plus-fair">순위·주간 챌린지는 마일리지가 아니라 실제 공부 시간으로 매겨서 구독 여부와 상관없이 공평해요.</p>
+      <p class="plus-legal"><button class="textbtn" data-legal="terms">이용약관</button><span aria-hidden="true">·</span><button class="textbtn" data-legal="privacy">개인정보 처리방침</button></p>`;
   }
   let plan='y';
+  /* ===== 구독 관리 ===== */
+  const fmtD=k=>{const d=pk(k);return `${d.getFullYear()}.${pad(d.getMonth()+1)}.${pad(d.getDate())}`};
+  const platform=()=>window.TourdyNative||/iPhone|iPad|iPod/i.test(navigator.userAgent)||(/Mac/.test(navigator.platform)&&navigator.maxTouchPoints>1)?'ios':/Android/i.test(navigator.userAgent)?'android':'web';
+  function nextBill(){const P=SUBP();if(!P.trialEnd)return null;const t=today0();let d=pk(P.trialEnd),g=0;
+    while(d<=t&&g++<400)d=P.plan==='y'?new Date(d.getFullYear()+1,d.getMonth(),d.getDate()):new Date(d.getFullYear(),d.getMonth()+1,d.getDate());return dk(d)}
+  function manageHTML(){const P=SUBP(),trial=P.trialEnd&&dk(today0())<P.trialEnd,nb=nextBill(),pf=platform();
+    const where={ios:'App Store',android:'Google Play',web:'App Store · Google Play'}[pf];
+    const how={ios:'아이폰 설정 → 맨 위 내 이름(Apple ID) → 구독 → 투어디',android:'Play 스토어 → 프로필 → 결제 및 정기 결제 → 정기 결제 → 투어디',web:'아이폰은 설정 → Apple ID → 구독, 안드로이드는 Play 스토어 → 결제 및 정기 결제 → 정기 결제'}[pf];
+    const links=(pf!=='android'?'<a class="secondary plus-manage" href="https://apps.apple.com/account/subscriptions" target="_blank" rel="noopener">App Store에서 구독 관리</a>':'')+(pf!=='ios'?'<a class="secondary plus-manage" href="https://play.google.com/store/account/subscriptions" target="_blank" rel="noopener">Google Play에서 구독 관리</a>':'');
+    return `<div class="plus-manage-box"><div class="pm-h"><b>구독 관리</b>${isTest()?'<small>테스트 결제</small>':''}</div>
+      <dl class="pm-dl"><div><dt>요금제</dt><dd>${P.plan==='m'?`월간 ${SUB_PRICE.m}/월`:`연간 ${SUB_PRICE.y}/년`}</dd></div>
+        <div><dt>${trial?'무료 체험':'구독 시작'}</dt><dd>${trial?`${fmtD(P.trialEnd)}까지`:fmtD(P.log[P.log.length-1].from)}</dd></div>
+        <div><dt>다음 결제일</dt><dd>${nb?fmtD(nb):'-'}</dd></div><div><dt>결제</dt><dd>${where}</dd></div></dl>
+      <div class="pm-acts">${links}</div>
+      <p class="note">요금제 변경과 해지는 결제한 스토어에서 해요: ${how}. 다음 결제일 24시간 전까지 해지하면 다음 결제가 되지 않고, 남은 기간 동안은 혜택이 유지돼요. 이미 받은 마일리지와 도장은 해지 후에도 그대로예요.</p>
+      <div class="pm-row"><button class="textbtn" data-subrestore>구매 복원</button>${isTest()?'<button class="secondary" data-subtest>테스트: 구독 끄기</button>':''}</div></div>`}
 
   /* ===== 꾸미기 ===== */
   // [키, 이름, 설명] — 럭셔리 10종은 css의 .skin-lux .skin-키 변수로 칠한다
@@ -111,15 +128,17 @@
 
   /* ===== 연결 ===== */
   function refresh(){try{applySkin();if(typeof renderTodayDest==='function')renderTodayDest();if(tab==='set')renderSet();if(tab==='stats')renderStats();if(tab==='travel')renderTravel()}catch(e){}}
-  function toggleSub(on){setSub(on);grantMonthly();save();applySkin();try{window.TourdyAccount&&TourdyAccount.relisten&&TourdyAccount.relisten()}catch(e){}refresh();toast(on?'투어디 플러스를 켰어요 (테스트)':'투어디 플러스를 껐어요 (테스트)')}
+  function toggleSub(on){setSub(on);if(on){const P=SUBP();P.plan=plan;P.trialEnd=dk(addD(today0(),7));P.store=isTest()?'test':platform()}grantMonthly();save();applySkin();try{window.TourdyAccount&&TourdyAccount.relisten&&TourdyAccount.relisten()}catch(e){}refresh();toast(on?'투어디 플러스를 켰어요 (테스트)':'투어디 플러스를 껐어요 (테스트)')}
   window.subTestBtn=()=>isTest()?`<button data-subtest>플러스 ${subOn()?'끄기':'켜기'}</button>`:'';
   document.addEventListener('click',e=>{
     if(e.target.closest('[data-subtest]')&&isTest()){toggleSub(!subOn());return}
     if(e.target.closest('[data-subgo]')){goSub();return}
     const pl=e.target.closest('[data-plan]');if(pl){plan=pl.dataset.plan;document.querySelectorAll('.plus-plan').forEach(b=>b.classList.toggle('on',b===pl));return}
+    if(e.target.closest('[data-subrestore]')){toast(subOn()?'이미 투어디 플러스를 쓰고 있어요':isTest()?'복원할 구매가 없어요 (테스트에서는 스토어 결제가 없어요)':'복원할 구매가 없어요. 결제한 스토어 계정으로 로그인돼 있는지 확인해 주세요');return}
+    const lg=e.target.closest('[data-legal]');if(lg){setTab('set');setPage=lg.dataset.legal;renderSet();window.scrollTo({top:0});return}
     if(e.target.closest('[data-subtrial]')){if(isTest())toggleSub(true);else toast('결제는 스토어 출시 때 연결돼요');return}
   });
-  {const base=renderSet;renderSet=function(){const r=base.apply(this,arguments);if(setPage==='sub')renderSubPage();if(setPage==='travel')markTravelSet();else prevSkin=null;return r}}
+  {const base=renderSet;renderSet=function(){const r=base.apply(this,arguments);if(setPage==='sub')renderSubPage();if((setPage==='privacy'||setPage==='terms')&&window.legalHTML){const el=$(setPage+'Body');if(el&&!el.dataset.done){el.innerHTML=legalHTML(setPage);el.dataset.done=1}}if(setPage==='travel')markTravelSet();else prevSkin=null;return r}}
   {const base=renderStats;renderStats=function(){const r=base.apply(this,arguments);renderPro();return r}}
   {const base=renderPassCard;renderPassCard=function(){const r=base.apply(this,arguments);const el=$('achPassCard');if(el&&!el.querySelector('.rest-row'))el.insertAdjacentHTML('beforeend',restRow());return r}}
   {const base=renderMilePage;renderMilePage=function(){const r=base.apply(this,arguments);const el=$('mileBody');if(el){

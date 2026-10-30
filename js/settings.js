@@ -18,6 +18,8 @@ const SET_ITEMS=[
   ['daystart','하루의 시작',()=>DS?`${ampm(new Date(2000,0,1,DS).getTime())}`:'자정'],
   ['week','한 주의 시작',()=>DOW[wkStart()]+'요일'],
   ['dday','D-day',()=>S.dday?`${S.dday.name||'D-day'} · ${S.dday.date.slice(5).replace('-','/')}`:'없음'],
+  ['privacy','개인정보 처리방침',()=>''],
+  ['terms','이용약관',()=>''],
   ['reset','기록 초기화',()=>''],
   ['ex','예시 데이터',()=>'지우기'],
 ];
@@ -27,7 +29,7 @@ function renderSet(){
   // PIP는 PC·맥에서만. 아이폰·아이패드·안드로이드(앱·브라우저 모두)에서는 숨긴다.
   // 아이패드 사파리는 맥처럼 보고하므로 터치 지점 수로 구분한다
   const pipAllowed=()=>!window.TourdyNative&&!/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)&&!(/Mac/.test(navigator.platform)&&navigator.maxTouchPoints>1);
-  const IT=Object.fromEntries(SET_ITEMS.map(x=>[x[0],x])),GR=[['구독',['sub']],['타이머 설정',['goal','notify','extra','theme','pip','daystart','week','dday']],['여행 설정',['travel','sound','mile']],['계정',['account','invite']],['기타',['reset','ex']]];
+  const IT=Object.fromEntries(SET_ITEMS.map(x=>[x[0],x])),GR=[['구독',['sub']],['타이머 설정',['goal','notify','extra','theme','pip','daystart','week','dday']],['여행 설정',['travel','sound','mile']],['계정',['account','invite']],['정보',['terms','privacy']],['기타',['reset','ex']]];
   $('setItems').innerHTML=GR.map(([g,ks])=>{const rows=ks.filter(k=>IT[k]&&(k!=='ex'||ex)&&(k!=='pip'||pipAllowed())).map(k=>{const [,t,v]=IT[k];return `<li><button data-go="${k}"><span class="sl-t">${t}</span><span class="sl-v">${esc(v())}</span>${CHEV_R}</button></li>`}).join('');
     return rows?`<li class="sl-g">${g}</li>${rows}`:''}).join('');
   $('setList').hidden=!!setPage;$('setBack').hidden=!setPage;
