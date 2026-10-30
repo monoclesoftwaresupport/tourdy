@@ -3,5 +3,5 @@
 window.TOURDY_CONFIG = {
   supabaseUrl: 'https://vslebhksfeffqpghiocx.supabase.co',        // 예: 'https://abcdefghijklmnop.supabase.co'
   supabaseAnonKey: 'sb_publishable_Y69NflQ2gVRTtCCqateFGw_VSVQzFBd',    // 예: 'eyJhbGciOi...' 또는 'sb_publishable_...'
-  nativeScheme: 'com.kimgeon.tourdy' // 아이폰 앱 로그인 후 돌아오는 주소 (Supabase Redirect URLs에 등록)
+  nativeScheme: 'com.monoclesoftware.tourdy' // 아이폰 앱 로그인 후 돌아오는 주소 = 번들 ID (Xcode URL Types와 Supabase Redirect URLs에도 같은 값)
 };
