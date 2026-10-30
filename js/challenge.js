@@ -1,10 +1,11 @@
 /* ---------- 주간 챌린지 (여행 탭 → 주간) ----------
-   - 매주 월요일 0시(한국 시간) 새로 시작. 다음 주 목적지는 후보 3개국 중 투표로 정한다.
+   - 매주 월요일 0시(한국 시간) 새로 시작. 그 주 목적지는 서버가 무작위로 정한다(투표 없음).
    - 공부 시간으로만 겨룬다: 타이머로 잰 공부만(직접 기록·예시 기록 제외), 마일리지 2배와 무관.
      서버가 다시 확인한다(끝난 지 24시간 안·겹침 불가·하루 8시간까지 → 주 최대 56시간·참가 후 공부만).
    - 등급(브론즈~다이아)이 같은 사람끼리 30명 리그. 승급은 위로 갈수록 어렵다(상위 30/20/15/10%·주 10/15/25/35시간).
      강등은 하위 20%이면서 등급별 유지 기준(실버 3·골드 5·플래티넘 10·다이아 15시간) 미만.
-   - 협동 목표, 공부 시간으로 여는 랜드마크 5곳(열릴 때마다 엽서), 완주하면 그 나라 무료 항공권.
+   - 리그(최대 30명) 협동 목표, 공부 시간으로 여는 랜드마크 5곳(열릴 때마다 엽서), 완주하면 그 나라 무료 항공권.
+   - 보상 마일리지: 완주 300 · 협동 100(7시간 이상 공부한 사람만) · 금 뱃지 100 · 특별 여권 200
    - 월요일에 지난주 결과 카드를 보여 주고 보상을 넣는다. 보상은 고유 id라 기기가 여러 대여도 한 번만.
    - 주중 알림: 리그 순위 상승, 완주 1시간 전, 완주, 일요일 마감 3시간 전. */
 (function(){
@@ -22,9 +23,10 @@
   };
   const TIERS=['브론즈','실버','골드','플래티넘','다이아'];
   const LANDMARK_H=[3,7,10,20,35];               // 랜드마크가 열리는 주간 공부 시간 (주 최대 56시간)
-  const FINISH=600,COOP_MIN=120,RANK_MIN_SIZE=5;  // 완주 10시간, 협동 보상은 2시간 이상, 순위 보상은 5명 이상 리그
+  const FINISH=600,COOP_MIN=420,RANK_MIN_SIZE=5;  // 완주 10시간, 협동 보상은 7시간 이상, 순위 보상은 5명 이상 리그
   const PROMO_PCT=[30,20,15,10],PROMO_H=[10,15,25,35],KEEP_H=[0,3,5,10,15];   // 서버와 같은 승급·강등 기준
-  const REWARD={stamp:30,gold:100,passport:200,coop:20};
+  const REWARD={stamp:300,gold:100,passport:200,coop:100};   // 보너스 마일리지
+  const mi=n=>`${Number(n).toLocaleString()} 마일리지`;
   const NAME={stamp:'완주 스탬프',gold:'리그 상위 10% 금 뱃지',passport:'리그 1등 특별 여권',coop:'협동 목표 스탬프',ticket:'무료 항공권'};
   const NOTE_ID={rank:41070,near:41071,done:41072,deadline:41073};
   let board=null,loading=false,err='',joining=false,voting=false,loadedAt=0;
@@ -147,7 +149,7 @@
     const d=$('wkResult');if(!d||d.open)return;
     const up=r.next_tier>r.tier,down=r.next_tier<r.tier;
     const tierLine=up?`<b class="wkr-up">${tname(r.tier)} → ${tname(r.next_tier)} 승급!</b>`:down?`<b class="wkr-down">${tname(r.tier)} → ${tname(r.next_tier)}</b>`:`<b>${tname(r.tier)} 유지</b>`;
-    const list=got.length?got.map(g=>`<li><span>${esc(NAME[g.kind])}</span><b>+${g.m}</b></li>`).join(''):'';
+    const list=got.length?got.map(g=>`<li><span>${esc(NAME[g.kind])}</span><b>+${mi(g.m)}</b></li>`).join(''):'';
     $('wkResultBody').innerHTML=`<div class="wkr-flag">${flag(r.country)}</div><small class="wkr-k">${esc(wk(r.week))} 주 · ${esc(cname(r.country))} 챌린지 결과</small>
       <div class="wkr-stats"><div><small>공부</small><b>${hm(r.minutes)}</b></div><div><small>리그 순위</small><b>${r.rank}위 / ${r.size}명</b></div></div>
       <p class="wkr-tier">다음 주 등급 · ${tierLine}</p>
@@ -187,20 +189,25 @@
     const list=(S.badges||[]).slice().sort((a,b)=>String(b.week).localeCompare(String(a.week)));
     const pass=list.filter(b=>b.kind==='passport'),others=list.filter(b=>b.kind!=='passport');
     const cards=(S.postcards||[]).slice().sort((a,b)=>String(b.week).localeCompare(String(a.week))||a.i-b.i);
-    if(!list.length&&!cards.length)return '<p class="note">아직 받은 챌린지 보상이 없어요. 공부 3시간이면 첫 랜드마크 엽서가, 10시간이면 완주 스탬프와 무료 항공권이 와요.</p>';
+    if(!list.length&&!cards.length)return `<p class="note">아직 받은 챌린지 보상이 없어요. 공부 3시간이면 첫 랜드마크 엽서가, 10시간이면 완주 스탬프와 ${mi(REWARD.stamp)}, 무료 항공권이 와요.</p>`;
     return `${pass.length?`<span class="plabel">특별 여권</span><div class="wk-passes">${pass.map(passportCover).join('')}</div>`:''}
       ${others.length?`<span class="plabel">스탬프 · 뱃지</span><div class="wk-badges">${others.map(b=>`<div class="wk-badge wk-${esc(b.kind)}" title="${esc(NAME[b.kind]||'')}">${flag(b.country)}<b>${esc(cname(b.country))}</b><small>${esc(NAME[b.kind]||'')}</small><small>${esc(wk(b.week))} 주</small></div>`).join('')}</div>`:''}
       ${cards.length?`<span class="plabel">랜드마크 엽서 ${cards.length}장</span><div class="wk-cards">${cards.map(p=>`<div class="wk-card">${flag(p.country)}<b>${esc(p.name)}</b><small>${esc(cname(p.country))} · ${esc(wk(p.week))} 주</small></div>`).join('')}</div>`:''}`;
   }
   const RULES=`<ul class="wk-rules">
-    <li>매주 월요일 0시(한국 시간)에 새로 시작해요. 다음 주 목적지는 후보 3개국 중 투표로 정해요.</li>
+    <li>매주 월요일 0시(한국 시간)에 새로 시작해요. 그 주의 목적지 나라는 무작위로 정해져요.</li>
     <li>타이머로 잰 공부 시간으로만 겨뤄요. 직접 입력한 기록은 빠지고, 투어디 플러스(마일리지 1.5배)와도 상관없어요.</li>
     <li>참가한 뒤의 공부만, 하루 최대 8시간(주 최대 56시간)까지 반영돼요. 끝난 공부는 24시간 안에 인터넷이 연결돼야 올라가요.</li>
     <li>등급(${TIERS.join('·')})이 같은 사람끼리 30명씩 리그로 묶여요. 리그가 5명 이상일 때 승급·강등이 있어요.</li>
     <li>승급(위로 갈수록 어려워요): ${TIERS.slice(0,4).map((t,i)=>`${t} 상위 ${PROMO_PCT[i]}%·${PROMO_H[i]}시간`).join(' · ')}</li>
     <li>강등: 하위 20%이면서 ${TIERS.slice(1).map((t,i)=>`${t} ${KEEP_H[i+1]}시간`).join(' · ')} 미만 (브론즈는 강등 없음)</li>
-    <li>보상: 공부 ${LANDMARK_H.join('·')}시간마다 랜드마크 엽서 · 10시간 완주 스탬프(+${REWARD.stamp})와 그 나라 무료 항공권 · 리그 상위 10% 금 뱃지(+${REWARD.gold}) · 리그 1등 특별 여권(+${REWARD.passport}) · 협동 목표 달성 스탬프(+${REWARD.coop}, 2시간 이상 참여)</li></ul>`;
+    <li>랜드마크: 이번 주 공부 ${LANDMARK_H.join('·')}시간마다 하나씩 열리고 엽서가 와요.</li>
+    <li>완주(10시간): 완주 스탬프와 보너스 ${mi(REWARD.stamp)}, 그 나라까지 가는 무료 항공권(이코노미 운임만큼 마일리지)을 받아요.</li>
+    <li>리그 협동 목표: 같은 리그 사람들의 공부 시간을 합쳐 목표를 채우면, 이번 주 ${hm(COOP_MIN)} 이상 공부한 사람 모두 협동 스탬프와 보너스 ${mi(REWARD.coop)}를 받아요.</li>
+    <li>순위 보상(완주한 사람만, 리그 5명 이상): 리그 상위 10% 금 뱃지와 보너스 ${mi(REWARD.gold)} · 리그 1등 특별 여권과 보너스 ${mi(REWARD.passport)}</li></ul>`;
+  // 목적지는 무작위로 정하기로 해서 투표 화면은 보여 주지 않는다
   function voteBox(){
+    return '';
     const v=board.vote;if(!v||!Array.isArray(v.candidates))return '';
     const total=v.candidates.reduce((a,c)=>a+(c.votes||0),0);
     return `<div class="wk-vote"><span class="plabel">다음 주 목적지 투표 · ${esc(wk(v.week))} 주</span>
@@ -223,8 +230,8 @@
     const c=board.country,land=(C[c]||['',[]])[1],mine=board.my_minutes||0,coop=board.coop||{minutes:0,goal:1,participants:0};
     const head=`<div class="wk-head">${flag(c)}<div><small>이번 주 목적지 · ${esc(left(board.ends_at))}</small><b>${esc(cname(c))}</b><span class="wk-going">${coop.participants}명이 함께 ${esc(ro(cname(c)))} 떠났어요</span></div><span class="wk-tier wk-t${board.tier|0}">${esc(tname(board.tier))}</span></div>`;
     const coopPct=Math.min(100,Math.round(coop.minutes/Math.max(1,coop.goal)*100));
-    const coopBox=`<div class="wk-coop"><span class="plabel">모두 함께 · 협동 목표</span><div class="wk-bar"><i style="width:${coopPct}%"></i></div>
-      <small>${hm(coop.minutes)} / ${hm(coop.goal)} (${coopPct}%) · 달성하면 이번 주 ${hm(COOP_MIN)} 이상 공부한 모두에게 스탬프</small></div>`;
+    const coopBox=`<div class="wk-coop"><span class="plabel">리그 협동 목표</span><div class="wk-bar"><i style="width:${coopPct}%"></i></div>
+      <small>${hm(coop.minutes)} / ${hm(coop.goal)} (${coopPct}%) · 달성하면 이번 주 ${hm(COOP_MIN)} 이상 공부한 사람 모두 협동 스탬프와 ${mi(REWARD.coop)}</small></div>`;
     if(!board.joined){
       return `<div class="panel-head"><h2>주간 챌린지</h2></div>${head}
         <p class="note">이번 주 내 등급은 <b>${esc(ieyo(tname(board.tier)))}</b>. 참가하면 같은 등급의 최대 30명과 한 리그가 돼요.</p>
@@ -265,21 +272,21 @@
     TOUR_ART.wkGift='<svg viewBox="0 0 120 120" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><rect x="26" y="20" width="52" height="72" rx="6"/><circle cx="52" cy="48" r="12"/><path d="M40 72h24M44 80h16"/><circle cx="86" cy="80" r="18"/><path d="m80 80 5 5 9-10"/></svg>';
   }
   const WK_TOUR=[
-    {k:'주간 챌린지',art:'wkGlobe',h:'매주 한 나라로 다 같이 떠나요',
-     p:'일주일 동안 투어디 사용자 모두가 같은 나라를 목적지로 공부해요. 매주 월요일 0시(한국 시간)에 새로 시작해요.',
+    {k:'주간 챌린지',art:'wkGlobe',h:'매주 한 나라로 떠나는 공부 대결',
+     p:'매주 월요일 0시(한국 시간)에 새 챌린지가 시작돼요. 그 주의 목적지 나라는 무작위로 정해지고, 일주일 동안 공부 시간으로 겨뤄요.',
      list:['<b>타이머로 잰 공부 시간</b>으로만 겨뤄요','직접 입력한 기록은 빠지고, 플러스 구독과도 상관없이 공평해요','하루 최대 8시간까지 반영돼요','참가하려면 <b>로그인</b>이 필요해요']},
     {k:'리그',art:'wkLeague',h:'같은 등급끼리 30명 리그',
      p:'브론즈부터 다이아까지 다섯 등급이 있어요. 같은 등급인 사람끼리 최대 30명씩 한 리그가 돼요.',
      list:['<b>▲ 승급</b> · 순위가 높고 정해진 시간 이상 공부하면 다음 주 한 등급 위로','<b>▼ 강등</b> · 순위가 낮고 유지 기준 시간을 못 채우면 한 등급 아래로','리그가 5명 이상일 때만 승급·강등이 있어요']},
-    {k:'랜드마크',art:'wkPost',h:'공부할수록 랜드마크가 열려요',
+    {k:'랜드마크와 완주',art:'wkPost',h:'공부할수록 랜드마크가 열려요',
      p:'그 나라의 랜드마크 다섯 곳이 이번 주 공부 시간에 따라 하나씩 열리고, 열릴 때마다 엽서가 와요.',
-     list:[`<b>${LANDMARK_H.join('·')}시간</b>에 하나씩 열려요`,`<b>10시간</b>이면 완주 · 완주 스탬프(+${REWARD.stamp})와 그 나라 <b>무료 항공권</b>`]},
-    {k:'협동과 투표',art:'wkTeam',h:'모두의 공부 시간을 합쳐요',
-     p:'참가한 모든 사람의 공부 시간을 합쳐서 협동 목표를 채워요. 다음 주 목적지도 함께 정해요.',
-     list:[`협동 목표를 달성하면 ${hm(COOP_MIN)} 이상 공부한 모두에게 스탬프(+${REWARD.coop})`,'후보 3개국 중 <b>투표</b>로 다음 주 나라를 골라요 (일요일 자정까지 바꿀 수 있어요)']},
+     list:[`<b>${LANDMARK_H.join('·')}시간</b>에 하나씩 열려요`,`<b>10시간</b>이면 완주 · 완주 스탬프와 <b>보너스 ${mi(REWARD.stamp)}</b>`,'완주하면 그 나라까지 가는 <b>무료 항공권</b>도 받아요 (이코노미 운임만큼 마일리지)']},
+    {k:'리그 협동 목표',art:'wkTeam',h:'리그 30명이 한 팀이에요',
+     p:'순위는 서로 겨루지만, 협동 목표는 같은 리그 사람들의 공부 시간을 모두 합쳐서 채워요.',
+     list:['리그 사람들의 이번 주 공부 시간이 모두 합산돼요',`목표를 채우면 이번 주 <b>${hm(COOP_MIN)} 이상</b> 공부한 사람 모두 협동 스탬프와 <b>보너스 ${mi(REWARD.coop)}</b>`,'내가 공부할수록 리그 전체가 목표에 가까워져요']},
     {k:'결과와 보상',art:'wkGift',h:'월요일에 결과 카드가 도착해요',
-     p:'한 주가 끝나면 다음 월요일에 순위와 등급 변화를 보여 주고 보상을 넣어 드려요.',
-     list:[`완주하고 리그 상위 10% · <b>금 뱃지</b>(+${REWARD.gold})`,`완주하고 리그 1등 · <b>특별 여권</b>(+${REWARD.passport})`,'받은 마일리지는 바로 여행에 쓸 수 있어요'],
+     p:'한 주가 끝나면 다음 월요일에 순위와 등급 변화를 보여 주고, 받은 스탬프·뱃지와 마일리지를 넣어 드려요.',
+     list:[`완주하고 리그 상위 10% · <b>금 뱃지</b>와 보너스 ${mi(REWARD.gold)}`,`완주하고 리그 1등 · <b>특별 여권</b>과 보너스 ${mi(REWARD.passport)}`,'스탬프와 뱃지는 주간 탭의 <b>내 챌린지 보상</b>에, 특별 여권은 <b>업적</b>에도 진열돼요'],
      note:'다시 보고 싶으면 <b>설정 → 기타 → 주간 챌린지</b>에서 볼 수 있어요.'}
   ];
   function tutorial(){
