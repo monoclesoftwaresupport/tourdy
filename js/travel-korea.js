@@ -108,7 +108,7 @@ function renderKorea(){
   if(T.krNews&&T.krNews.length){h+=`<div class="kr-news">${TRAIN} ${T.krNews.map(c=>KRM[c][1]).join(', ')} 도착! 지역 도장을 받았어요.</div>`;T.krNews=[];save()}
   h+=`<div class="kr-sign"><span class="kr-line"></span><div class="kr-st"><small>${at[2]}</small><b>${at[1]}</b></div><span class="kr-now">${K.at===K.home&&!K.done.length?'출발지':'현재 위치'}</span></div>`;
   if(krCanHome(K))h+=`<button class="kr-home${krPickHome?' on':''}" id="krHome">${krPickHome?'출발지 고르는 중 · 닫기':'출발지 바꾸기'}</button>`;
-  if(TRAVEL_TEST)h+=`<div class="tv-test"><span>테스트</span>${K.to?'<button id="krSkip">바로 도착</button>':''}<button data-kadd="100">+100</button><button data-kadd="1000">+1000</button><button id="krReset">국내 초기화</button></div>`;
+  if(TRAVEL_TEST)h+=`<div class="tv-test"><span>테스트</span>${K.to?'<button id="krSkip">바로 도착</button>':''}<button data-kadd="100">+100</button><button data-kadd="1000">+1000</button><button id="krReset">국내 초기화</button>${window.subTestBtn?subTestBtn():''}</div>`;
   h+=`<div class="tv-stats"><div><b>${Math.floor(avail)}</b><span>보유 마일리지</span></div><div><b>${K.done.length}<small>/${KR.length-1}</small></b><span>방문한 시·군</span></div><div><b>${Math.round(K.km).toLocaleString()}</b><span>누적 이동 km</span></div></div>`;
   $('krNow').innerHTML=h;
   if(K.to&&KRM[K.to]){const to=KRM[K.to],c=krTC(K),p=Math.min(1,Math.max(0,avail/c)),left=c-avail;

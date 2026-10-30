@@ -59,7 +59,7 @@ function renderSpace(){
   let h='';
   if(T.spNews&&T.spNews.length){h+=`<div class="sp-news">${ROCKET} ${T.spNews.map(id=>spObj(id)[1]).join(', ')} 도착! 미션 패치를 받았어요.</div>`;T.spNews=[];save()}
   h+=`<div class="sp-now">${planet(cur,64)}<div><small>현재 위치 · NOW AT</small><b>${cur[1]}</b><span>${cur[2]} · ${cur[6]}</span></div></div>`;
-  if(TRAVEL_TEST&&spaceOpen(T))h+=`<div class="tv-test sp-test"><span>테스트</span>${P.to?'<button id="spSkip">바로 도착</button>':''}<button data-add="1000">+1000</button><button id="spReset">우주 초기화</button>${T.spTest?'<button id="spRelock">다시 잠그기</button>':''}</div>`;
+  if(TRAVEL_TEST&&spaceOpen(T))h+=`<div class="tv-test sp-test"><span>테스트</span>${P.to?'<button id="spSkip">바로 도착</button>':''}<button data-add="1000">+1000</button><button id="spReset">우주 초기화</button>${window.subTestBtn?subTestBtn():''}${T.spTest?'<button id="spRelock">다시 잠그기</button>':''}</div>`;
   h+=`<div class="sp-stats"><div><b>${Math.floor(avail)}</b><span>보유 마일리지</span></div><div><b>${P.done.length}<small>/${SPACE.length}</small></b><span>탐사 완료</span></div><div><b>${ZONES[lastOpen]}</b><span>열린 구역</span></div></div>`;
   if(P.to&&SPX[P.to]){const nx=SPX[P.to],p=Math.min(1,Math.max(0,avail/nx[4])),left=nx[4]-avail;
     h+=`<div class="sp-card"><div class="sp-k">MISSION ${pad(P.done.length+1)} · 비행 중</div>

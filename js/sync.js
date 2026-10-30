@@ -182,6 +182,7 @@
   function retryDone(){clearTimeout(retryTimer);retryTimer=null;retryDelay=0}
   // 다른 기기가 저장하면 서버가 바로 알려 준다 → 받아온다. (본인 기록만 오도록 서버 보안 규칙이 그대로 적용)
   function listen(){
+    if(window.subOn&&!subOn())return unlisten(); // 실시간 기기 간 동기화는 투어디 플러스 (무료는 앱을 열 때·저장할 때 계정에 보관)
     const me=uid();
     if(!sb||typeof sb.channel!=='function'||!me||(live&&live.uid===me))return;
     unlisten();
@@ -227,7 +228,7 @@
     github:'<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 1.5a10.5 10.5 0 0 0-3.3 20.5c.5.1.7-.2.7-.5v-1.8c-2.9.6-3.5-1.4-3.5-1.4-.5-1.2-1.2-1.5-1.2-1.5-.9-.6.1-.6.1-.6 1 .1 1.6 1.1 1.6 1.1.9 1.6 2.5 1.1 3.1.9.1-.7.4-1.1.7-1.4-2.3-.3-4.8-1.2-4.8-5.2 0-1.1.4-2.1 1.1-2.8-.1-.3-.5-1.4.1-2.8 0 0 .9-.3 2.9 1.1a9.9 9.9 0 0 1 5.2 0c2-1.4 2.9-1.1 2.9-1.1.6 1.4.2 2.5.1 2.8.7.7 1.1 1.7 1.1 2.8 0 4-2.5 4.9-4.8 5.2.4.3.7 1 .7 2v3c0 .3.2.6.7.5A10.5 10.5 0 0 0 12 1.5z"/></svg>',
     kakao:'<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#191919" d="M12 3.5c-5.2 0-9.5 3.3-9.5 7.4 0 2.6 1.7 4.9 4.3 6.2l-1.1 4c-.1.3.3.6.6.4l4.7-3.1c.3 0 .7.1 1 .1 5.2 0 9.5-3.3 9.5-7.5S17.2 3.5 12 3.5z"/></svg>'
   };
-  window.TourdyAccount={label:()=>!configured?'준비 중':uid()?userName(session.user):'로그인 안 됨',render:renderAccount,
+  window.TourdyAccount={relisten:()=>{unlisten();listen()},label:()=>!configured?'준비 중':uid()?userName(session.user):'로그인 안 됨',render:renderAccount,
     client:()=>sb,userId:()=>uid()||null,configured:()=>configured};
 
   document.addEventListener('click',e=>{

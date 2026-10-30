@@ -64,16 +64,16 @@ const flightMin=(a,b)=>Math.max(30,Math.round(kmBetween(a,b)/800*60)); // 평균
 const MILE_MS=6*6e4; // 공부 6분 = 1 마일리지
 const TRAVEL_TEST=true; // 테스트용 버튼 표시. 출시 전 false로
 function tr(){const T=S.travel||(S.travel={on:true,at:'KR',to:null,used:0,km:0,stamps:[],news:[]});if(!T.ver){T.on=true;T.ver=2}return T} // 여행 탭은 기본으로 켜짐
-function totalMiles(){const pd=perDay(true);let m=0;for(const k in pd)m+=Math.min(pd[k].study,8*36e5)/MILE_MS;return m+bonusList(pd).reduce((a,b)=>a+b.m,0)}
+function totalMiles(){const pd=perDay(true);let m=0;for(const k in pd)m+=Math.min(pd[k].study,8*36e5)/MILE_MS*(subDay(k)?SUB_RATE:1);return m+bonusList(pd).reduce((a,b)=>a+b.m,0)}
 /* 보너스 마일리지: 하루 8시간 +50 · 7일 연속 +100 · 30일 연속 +1000 (공부 기록으로 계산) */
-function bonusList(pd){pd=pd||perDay(true);const out=[],days=Object.keys(pd).filter(k=>pd[k].study>=6e4).sort();
+function bonusList(pd){pd=pd||perDay(true);const out=[],rs=restSet(),days=Object.keys(pd).filter(k=>pd[k].study>=6e4).sort();
   Object.keys(pd).sort().forEach(k=>{if(pd[k].study>=8*36e5)out.push({k:'d8:'+k,m:50,t:'하루 8시간 공부',d:k})});
   let run=[];const flush=()=>{if(!run.length)return;const s0=run[0];for(let i=7;i<=run.length;i+=7)out.push({k:`w7:${s0}:${i}`,m:100,t:`${i}일 연속 공부`,d:run[i-1]});for(let i=30;i<=run.length;i+=30)out.push({k:`m30:${s0}:${i}`,m:1000,t:`${i}일 연속 공부`,d:run[i-1]});run=[]};
-  days.forEach(k=>{if(run.length&&dk(addD(pk(run[run.length-1]),1))!==k)flush();run.push(k)});flush();
+  days.forEach(k=>{if(run.length&&!restLinked(run[run.length-1],k,rs))flush();run.push(k)});flush(); // 휴무일은 연속을 이어 줌
   for(const g of S.gifts||[])if(g&&g.id&&Number.isFinite(g.m))out.push({k:'g:'+g.id,m:g.m,t:g.t||'선물',d:g.d}); // 친구 초대·주간 챌린지 보상
   return out}
-function curStreak(){const pd=perDay(true);let d=today0(),n=0;if(!(pd[dk(d)]&&pd[dk(d)].study>=6e4))d=addD(d,-1);while(pd[dk(d)]&&pd[dk(d)].study>=6e4){n++;d=addD(d,-1)}return n}
-const studyFor=miles=>fmtH(Math.max(0,miles)*MILE_MS);
+function curStreak(){const pd=perDay(true),rs=restSet(),ok=k=>pd[k]&&pd[k].study>=6e4;let d=today0(),n=0;if(!ok(dk(d)))d=addD(d,-1);while(ok(dk(d))||rs.has(dk(d))){if(ok(dk(d)))n++;d=addD(d,-1)}return n} // 휴무일은 세지 않고 건너뜀
+const studyFor=miles=>fmtH(Math.max(0,miles)*MILE_MS/mileRate()); // 구독 중이면 같은 마일리지를 더 짧은 공부로 채움
 function checkArrival(){let any=false,g=0;while(g++<12&&(checkEarth()||checkSpace()||checkKorea()))any=true;return any} // 경유·특별 루트처럼 이어지는 구간은 마일리지가 되는 만큼 한 번에 도착
 function checkEarth(){
   if(globalThis.TourdyNative&&!globalThis.TourdyNative.transactionComputing)return durableArrival(checkEarth,()=>{const T=tr();return !!(T.on&&T.to&&!T.hold&&totalMiles()-T.used>=wTC(T))});
@@ -148,7 +148,7 @@ function renderTravelTop(){
   const T=tr(),total=totalMiles(),avail=total-T.used,at=NAT[T.at];
   let news='';if(T.news&&T.news.length){news=`<div class="tv-news">${LAND.replace('<svg','<svg width="20" height="20"')} ${T.news.map(c=>`${ap(c)} ${flag(c)} ${NAT[c][2]}`).join(', ')} 착륙! 여권에 입국 도장이 찍혔어요.</div>`;T.news=[];save()}
   $('tvNow').innerHTML=`${news}<div class="sign"><div class="sign-l">${LAND}<b>${ap(T.at)}</b></div><div class="sign-r"><small>현재 공항 · NOW AT</small><span>${flag(T.at)} ${at[2]}, ${at[1]}</span></div></div>
-    ${TRAVEL_TEST&&!T.to?`<div class="tv-test"><span>테스트</span><button data-add="100">+100 마일리지</button><button data-add="1000">+1000</button><button id="tvReset">여행 초기화</button></div>`:''}
+    ${TRAVEL_TEST&&!T.to?`<div class="tv-test"><span>테스트</span><button data-add="100">+100 마일리지</button><button data-add="1000">+1000</button><button id="tvReset">여행 초기화</button>${window.subTestBtn?subTestBtn():''}</div>`:''}
     <div class="tv-stats"><div><b>${Math.floor(avail)}</b><span>보유 마일리지</span></div><div><b>${T.stamps.length}<small>/${NATIONS.length-1}</small></b><span>입국 도장</span></div><div><b>${Math.round(T.km).toLocaleString()}</b><span>누적 비행 km</span></div></div>`;
   if(T.to){const to=NAT[T.to],cost=wTC(T),p=Math.min(1,Math.max(0,avail/cost)),left=cost-avail,days=Math.ceil(Math.max(0,left)/80);
     if(!busyIn('tvFlight'))$('tvFlight').innerHTML=`${bpTicket(T.at,T.to,T.hold?0:p,left,cost,false,{cls:T.cls,final:T.final,gold:goldLeg('w',T.at,T.to)})}${T.hold?`<button class="primary ck-btn" data-ckopen="w">${wMode(T.at,T.to)==='cruise'?'승선':'탑승'} 수속하고 출발하기</button>`:''}${goalBox('w',T,left)}

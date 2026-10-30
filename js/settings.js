@@ -4,6 +4,7 @@ let setPage=null;
 const GOALS=[0];for(let m=30;m<=720;m+=30)GOALS.push(m);
 const goalLbl=m=>m?fmtH(m*6e4):'없음';
 const SET_ITEMS=[
+  ['sub','투어디 플러스',()=>subOn()?'구독 중':'월 '+SUB_PRICE.m],
   ['account','계정',()=>window.TourdyAccount?TourdyAccount.label():'로그인 안 됨'],
   ['invite','친구 초대',()=>window.TourdyInvite?TourdyInvite.label():''],
   ['goal','목표 시간',()=>goalLbl(S.goal||0)],
@@ -26,7 +27,7 @@ function renderSet(){
   // PIP는 PC·맥에서만. 아이폰·아이패드·안드로이드(앱·브라우저 모두)에서는 숨긴다.
   // 아이패드 사파리는 맥처럼 보고하므로 터치 지점 수로 구분한다
   const pipAllowed=()=>!window.TourdyNative&&!/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)&&!(/Mac/.test(navigator.platform)&&navigator.maxTouchPoints>1);
-  const IT=Object.fromEntries(SET_ITEMS.map(x=>[x[0],x])),GR=[['타이머 설정',['goal','notify','extra','theme','pip','daystart','week','dday']],['여행 설정',['travel','sound','mile']],['계정',['account','invite']],['기타',['reset','ex']]];
+  const IT=Object.fromEntries(SET_ITEMS.map(x=>[x[0],x])),GR=[['구독',['sub']],['타이머 설정',['goal','notify','extra','theme','pip','daystart','week','dday']],['여행 설정',['travel','sound','mile']],['계정',['account','invite']],['기타',['reset','ex']]];
   $('setItems').innerHTML=GR.map(([g,ks])=>{const rows=ks.filter(k=>IT[k]&&(k!=='ex'||ex)&&(k!=='pip'||pipAllowed())).map(k=>{const [,t,v]=IT[k];return `<li><button data-go="${k}"><span class="sl-t">${t}</span><span class="sl-v">${esc(v())}</span>${CHEV_R}</button></li>`}).join('');
     return rows?`<li class="sl-g">${g}</li>${rows}`:''}).join('');
   $('setList').hidden=!!setPage;$('setBack').hidden=!setPage;

@@ -104,7 +104,7 @@ function pickViaW(a,b){const d=kmBetween(a,b);if(d<7000)return null;let best=nul
 /* ---------- 좌석 등급 · 목표 도착일 ---------- */
 function clsPick(w,m,ci){const L=w==='kr'?KCLS[m]:WCLS[m];return `<div class="cls-pick" role="group" aria-label="좌석 등급">${L.map((l,i)=>`<button data-ci="${i}" data-cw="${w}" aria-pressed="${i===ci}">${l}${i?`<small>+${[0,30,60][i]}%</small>`:''}</button>`).join('')}</div>`}
 function goalBox(w,o,left){if(!TOPT().goal)return '';const t0=today0();let msg='날짜를 고르면 하루에 필요한 공부량을 알려 줘요';
-  if(o.goal){const days=Math.round((pk(o.goal)-t0)/864e5)+1;const need=Math.max(0,left)*6;
+  if(o.goal){const days=Math.round((pk(o.goal)-t0)/864e5)+1;const need=Math.max(0,left)*6/mileRate();
     msg=left<=0?'곧 도착해요':days<1?'이미 지난 날짜예요':need/days>480?'하루 최대 8시간까지만 쌓여서 이 날짜엔 어려워요':`하루 <b>${fmtH(need/days*6e4)}</b>씩 공부하면 ${days}일 뒤 도착해요`}
   return `<div class="tgoal"><label>목표 도착일 <input class="field" type="date" data-goal="${w}" value="${o.goal||''}" min="${dk(t0)}"></label><span>${msg}</span></div>`}
 ['krTrip','tvFlight'].forEach(id=>{$(id).addEventListener('click',e=>{const b=e.target.closest('[data-ci]');if(!b)return;const T=tr(),o=b.dataset.cw==='kr'?kr(T):T;o.cls=+b.dataset.ci;save();vibe();if(checkArrival())ding();renderTravel()});
@@ -410,11 +410,11 @@ const PASSES=[
   [60,'60일 정기권','뇌: "공부 그냥 숨 쉬듯 함"','의지력 따윈 필요 없습니다. 이쯤 되면 뇌가 알아서 자동사냥 중입니다.','#a78bfa','#5b21b6'],
   [100,'100일 정기권','마늘과 쑥을 이겨낸 자','곰도 사람 되는 100일을 버텼습니다. 당신은 이제 금빛 찬란한 인간 승리의 표본입니다.','#f6dd8a','#a07c12'],
   [365,'1년 정기권','핵임 암튼 핵임','1년 365일 하루도 빠짐없이. 이건 그냥 전설입니다.','#3a3a3a','#000000']];
-function studyRuns(pd){pd=pd||perDay(true);const days=Object.keys(pd).filter(k=>pd[k].study>=6e4).sort(),runs=[];let run=[];
-  days.forEach(k=>{if(run.length&&dk(addD(pk(run[run.length-1]),1))!==k){runs.push(run);run=[]}run.push(k)});if(run.length)runs.push(run);return runs}
+function studyRuns(pd){pd=pd||perDay(true);const rs=restSet(),days=Object.keys(pd).filter(k=>pd[k].study>=6e4).sort(),runs=[];let run=[];
+  days.forEach(k=>{if(run.length&&!restLinked(run[run.length-1],k,rs)){runs.push(run);run=[]}run.push(k)});if(run.length)runs.push(run);return runs}
 function passInfo(){const pd=perDay(true),runs=studyRuns(pd),first={};let best=0;
   runs.forEach(r=>{best=Math.max(best,r.length);PASSES.forEach(p=>{if(r.length>=p[0]){const d=r[p[0]-1];if(!first[p[0]]||d<first[p[0]])first[p[0]]=d}})});
-  const last=runs[runs.length-1]||[],t=dk(today0()),y=dk(addD(today0(),-1)),alive=last.length&&(last[last.length-1]===t||last[last.length-1]===y);
+  const last=runs[runs.length-1]||[],t=dk(today0()),y=dk(addD(today0(),-1)),lk=last[last.length-1],alive=last.length&&(lk===t||lk===y||(restSet().has(y)&&lk===dk(addD(today0(),-2))));
   return {runs,first,best,cur:alive?last.length:0,curStart:alive?last[0]:null,lastRun:last}}
 const passTier=n=>{let i=-1;PASSES.forEach((p,k)=>{if(n>=p[0])i=k});return i};
 function passKeys(){return studyRuns().flatMap(r=>PASSES.filter(p=>r.length>=p[0]).map(p=>({k:`p${p[0]}:${r[0]}`,p,d:r[p[0]-1]})))}
