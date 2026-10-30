@@ -117,10 +117,10 @@
     let mt=sample?[[5,40],[6,52],[7,61],[8,58],[9,74],[10,88]].map(([m,h])=>[m,h*36e5]):monthTotals();const mm=Math.max(1,...mt.map(x=>x[1]));
     const months=mt.map(([m,v])=>`<div><i style="--h:${(v/mm*100).toFixed(1)}%"></i><b>${Math.round(v/36e5)}</b><small>${m}월</small></div>`).join('');
     return `<div class="ps-sec"><div class="ps-h"><b>시간대별 집중</b><small>최근 30일 · ${fmtH(tot)}</small></div>
-        ${tot?`<div class="ps-hours" role="img" aria-label="가장 많이 공부한 시간대는 ${bi}시~${(bi+2)%24}시">${hours}</div><div class="ps-hx"><span>0시</span><span>6시</span><span>12시</span><span>18시</span><span>24시</span></div>`:'<p class="ps-empty">공부 기록이 쌓이면 시간대별로 얼마나 공부했는지 보여 드려요.</p>'}
+        ${tot?`<div class="ps-hours" role="img" aria-label="가장 많이 공부한 시간대는 ${bi}시~${(bi+2)%24}시">${hours}</div><div class="ps-hx"><span>0시</span><span>6시</span><span>12시</span><span>18시</span><span>24시</span></div>`:'<p class="ps-empty">시간대별 기록이 아직 없어요</p>'}
         ${tot?`<p class="ps-tip"><b>${bi}시~${(bi+2)%24}시</b>에 가장 집중이 잘 돼요. 어려운 과목은 이 시간에 배치해 보세요.</p>`:''}</div>
-      <div class="ps-sec"><div class="ps-h"><b>이번 주 vs 지난주</b><small><i class="lg cur"></i>이번 주 <i class="lg prev"></i>지난주</small></div>${wk?`<ul class="ps-week">${wk}</ul>`:'<p class="ps-empty">이번 주와 지난주 기록이 쌓이면 과목별로 비교해 드려요.</p>'}</div>
-      <div class="ps-sec"><div class="ps-h"><b>월별 공부 시간</b><small>최근 6개월 · 시간</small></div>${mt.some(x=>x[1]>0)?`<div class="ps-months">${months}</div>`:'<p class="ps-empty">공부 기록이 쌓이면 달마다 몇 시간 공부했는지 막대로 보여 드려요.</p>'}</div>`;
+      <div class="ps-sec"><div class="ps-h"><b>이번 주 vs 지난주</b><small><i class="lg cur"></i>이번 주 <i class="lg prev"></i>지난주</small></div>${wk?`<ul class="ps-week">${wk}</ul>`:'<p class="ps-empty">이번 주와 지난주 기록이 아직 없어요</p>'}</div>
+      <div class="ps-sec"><div class="ps-h"><b>월별 공부 시간</b><small>최근 6개월 · 시간</small></div>${mt.some(x=>x[1]>0)?`<div class="ps-months">${months}</div>`:'<p class="ps-empty">월별 기록이 아직 없어요</p>'}</div>`;
   }
   function renderPro(){const el=$('proStats');if(!el)return;const on=subOn();
     el.innerHTML=`<div class="panel-head"><h2>상세 분석</h2><span class="plus-badge">${STAR}플러스</span></div>`+(on?proHTML(false)
