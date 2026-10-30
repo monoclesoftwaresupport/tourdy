@@ -60,7 +60,7 @@
   }
   // 고른 스킨을 바로 보여 주는 미리보기 (무료는 잠긴 스킨도 미리보기만 할 수 있음)
   let prevSkin=null;
-  const SKIN_NAME={base:'기본',holo:'홀로그램',vintage:'빈티지'},SKIN_DESC={base:'깔끔한 기본 승차권',holo:'움직이는 무지갯빛 포일과 HOLO 인증 띠',vintage:'바랜 종이, 명조체 글씨, 빨간 검표 도장'};
+  const SKIN_NAME={base:'기본',holo:'홀로그램',vintage:'빈티지'},SKIN_DESC={base:'깔끔한 기본 승차권',holo:'홀로그램 보안 띠, 지나가는 반사광, 회전하는 인증 스티커',vintage:'바랜 종이, 명조체 글씨, 빨간 검표 도장'};
   function renderSkinPreview(sk,locked){const el=$('skinPreview');if(!el)return;
     el.className='skin-prev'+(sk!=='base'?' skin-'+sk:'');
     let tk='';try{const K=kr(tr()),a=K.home&&KRM[K.home]?K.home:'seoul',b=Object.keys(KRM).find(k=>k!==a&&krCost(a,k)<260)||'busan';tk=krTicket(a,b,{done:1,d:dk(today0())})}catch(e){}
