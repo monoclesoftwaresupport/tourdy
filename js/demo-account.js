@@ -39,7 +39,7 @@
     const size=members.length,sum=members.reduce((a,m)=>a+m.minutes,0);
     const ends=new Date(monday().getTime()+7*864e5);
     return {week:w,country,tier,joined:!!d.joined,my_minutes:d.joined?me.minutes:0,members:d.joined?members:[],
-      coop:{minutes:sum,goal:size*600,participants:size},ends_at:ends.toISOString(),
+      coop:{minutes:sum,goal:size*480,participants:size},ends_at:ends.toISOString(),
       promo_zone:tier<4&&size>=5?Math.ceil(size*PROMO_PCT[tier]/100):0,promo_min:(PROMO_H[tier]||0)*60,
       demote_zone:tier>0&&size>=5?Math.ceil(size*.2):0,keep_min:(KEEP_H[tier]||0)*60,vote:null};
   }
